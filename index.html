@@ -1245,7 +1245,7 @@ ES:{it:"Spagna",en:"Spain",cur:"EUR",fx:1,pli:92,tz:["Madrid","Canary"],r:{AN:"A
 PT:{it:"Portogallo",en:"Portugal",cur:"EUR",fx:1,pli:93,tz:["Lisbon","Madeira","Azores"],r:{"01":"Aveiro","02":"Beja","03":"Braga","04":"Bragança","05":"Castelo Branco","06":"Coimbra","07":"Évora","08":"Faro","09":"Guarda","10":"Leiria","11":"Lisboa","12":"Portalegre","13":"Porto","14":"Santarém","15":"Setúbal","16":"Viana do Castelo","17":"Vila Real","18":"Viseu","20":"Açores","30":"Madeira"},
  ch:["Continente","Pingo Doce","Lidl","Aldi","Intermarché","Minipreço","Auchan"]},
 CH:{it:"Svizzera",en:"Switzerland",cur:"CHF",fx:.93,pli:165,tz:["Zurich"],r:{AG:"Aargau",AI:"Appenzell Innerrhoden",AR:"Appenzell Ausserrhoden",BE:"Bern / Berne",BL:"Basel-Landschaft",BS:"Basel-Stadt",FR:"Fribourg / Freiburg",GE:"Genève",GL:"Glarus",GR:"Graubünden / Grigioni",JU:"Jura",LU:"Luzern",NE:"Neuchâtel",NW:"Nidwalden",OW:"Obwalden",SG:"St. Gallen",SH:"Schaffhausen",SO:"Solothurn",SZ:"Schwyz",TG:"Thurgau",TI:"Ticino",UR:"Uri",VD:"Vaud",VS:"Valais / Wallis",ZG:"Zug",ZH:"Zürich"},
- ch:["Migros","Coop","Denner","Aldi","Lidl","Volg"]},
+ ch:["Migros","Coop","Denner","Aldi","Lidl","Volg","Manor"]},
 LI:{it:"Liechtenstein",en:"Liechtenstein",cur:"CHF",fx:.93,pli:165,tz:["Vaduz"],ch:["Coop","Denner","Migros"]},
 BE:{it:"Belgio",en:"Belgium",cur:"EUR",fx:1,pli:108,tz:["Brussels"],r:{BRU:"Bruxelles / Brussel",VLG:"Vlaanderen",WAL:"Wallonie"},ch:["Delhaize","Colruyt","Carrefour","Aldi","Lidl",["Albert Heijn",["VLG","BRU"]],"Intermarché"]},
 NL:{it:"Paesi Bassi",en:"Netherlands",cur:"EUR",fx:1,pli:99,tz:["Amsterdam"],r:{DR:"Drenthe",FL:"Flevoland",FR:"Fryslân",GE:"Gelderland",GR:"Groningen",LI:"Limburg",NB:"Noord-Brabant",NH:"Noord-Holland",OV:"Overijssel",UT:"Utrecht",ZE:"Zeeland",ZH:"Zuid-Holland"},ch:["Albert Heijn","Jumbo","Lidl","Aldi","Plus","Dirk","Hoogvliet","Spar"]},
@@ -2381,7 +2381,7 @@ showTab(P.tab);update();refresh();
 
 // ---------- versione e aggiornamenti (v51) ----------
 // APP_V/APP_D li scrive strumenti/versione_app.py (anche dal workflow delle offerte): stessa versione di version.json, INFO.md e dell'etichetta vNN.
-const APP_V=53,APP_D="2026-11-24";
+const APP_V=54,APP_D="2026-11-24";
 const SITO="https://lucasalice1997-commits.github.io/spesasmart-wien/";
 function showVersion(){$("app-ver").textContent=L(`Versione ${APP_V} · ${fd(APP_D)} · © Progetto Nocciola`,`Version ${APP_V} · ${fd(APP_D)} · © Progetto Nocciola`)} // v53: avviso di copyright (LICENSE nel repository pubblico)
 let UPD=null; // versione nuova trovata sul sito
