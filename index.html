@@ -56,6 +56,16 @@ try{if(JSON.parse(localStorage.getItem("nc-profilo"))?.appearance==="cream"){
 .welcome .wl-facts dt{color:var(--muted)}.welcome .wl-facts dd{margin:0;font-weight:600}
 .welcome .wl-go{width:100%;padding:14px;font-size:1.05rem}
 .welcome .linkbtn{align-self:flex-start}
+/* v55: guida al primo avvio (4 passi, scheda vera dietro, si può saltare; riapribile da Impostazioni) */
+.tour{position:fixed;inset:0;z-index:45;background:rgba(20,14,10,.35);display:flex;align-items:flex-end;justify-content:center;padding:16px 16px calc(96px + env(safe-area-inset-bottom,0px))}
+@media (min-width:721px){.tour{align-items:center;padding-bottom:16px}}
+.tour .tc{width:min(460px,100%);background:var(--surface);color:var(--ink);border-radius:var(--r);padding:18px;box-shadow:0 10px 30px #0004;display:flex;flex-direction:column;gap:10px}
+.tour .tc h2:focus{outline:none}
+.tour .tc h2{font-family:var(--f-display);font-size:1.35rem;line-height:1.2;margin:0}
+.tour .tc p{margin:0;color:var(--muted)}
+.tour .tn{font-size:.78rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tour .tdots{display:flex;gap:6px}.tour .tdots i{width:8px;height:8px;border-radius:50%;background:var(--line)}.tour .tdots i.on{background:var(--brand)}
+.tour .tb{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:4px}
 </style>
 <style>
 /* NB: dalla v30 il sistema visivo è «Dispensa editoriale» (blocco in fondo a questo foglio di stile); qui sotto la base storica.
@@ -689,6 +699,7 @@ details[open]>summary::after{transform:translateY(2px) rotate(-135deg)}
             <p class="small muted" id="chains-here"></p>
             <p class="small muted" id="region-status"></p>
           </div>
+          <p><button type="button" class="linkbtn" id="tour-open" data-i="tourB">Come funziona Nocciola</button></p>
           <details class="panel" id="dati"><summary data-i="datiS">Salva o ripristina i dati</summary>
             <p class="small muted" data-i="datiP">I dati restano solo su questo dispositivo: salvali per spostarli altrove.</p>
             <div class="bar"><button class="btn" id="exp" data-i="expB">Prepara i dati da salvare</button><button class="btn ghost" id="exp-file" hidden data-i="expFB">Scarica come file</button><span class="small muted" id="expmsg" role="status"></span></div>
@@ -1183,7 +1194,7 @@ const rd=r=>LANG==="en"&&RX[r.n]?RX[r.n][1]:r.d;    // ingredienti dalla dispens
 const rp=r=>LANG==="en"&&RX[r.n]?RX[r.n][2]:r.p;    // passaggi
 const ingN=i=>tx(I[i][0]);                           // nome dell'ingrediente
 // testi fissi della pagina (elementi con data-i / data-ia)
-const STATIC_EN={appSettings:"Settings",appearanceL:"Appearance",appearanceCurrent:"Current",appearanceCream:"Cream",languageL:"Language",listTools:"More actions",settingsS:"Customise the menu",adviceS:"Tips and details",regionL:"Where do you shop?",regionA:"Region",flyerS:"Official flyers",dealSearch:"Search products",brand:"Nocciola, smart grocery shopping",payoff:"smart shopping",sections:"Sections",tMenu:"Menu",tSpesa:"Shopping",tEq:"Balance",tOff:"Deals",tTana:"Den",
+const STATIC_EN={tourB:"How Nocciola works",appSettings:"Settings",appearanceL:"Appearance",appearanceCurrent:"Current",appearanceCream:"Cream",languageL:"Language",listTools:"More actions",settingsS:"Customise the menu",adviceS:"Tips and details",regionL:"Where do you shop?",regionA:"Region",flyerS:"Official flyers",dealSearch:"Search products",brand:"Nocciola, smart grocery shopping",payoff:"smart shopping",sections:"Sections",tMenu:"Menu",tSpesa:"Shopping",tEq:"Balance",tOff:"Deals",tTana:"Den",
 heroA:"Nocciola’s tips",mascotA:"Nocciola the mouse: open the den",kpisA:"Menu details",famH:"Who eats at home?",cfgL:"Menu settings",actL:"Physical activity (adults and teens)",daysL:"Menu days",
 dtL:"Shopping day",budL:"Weekly budget",budP:"none",outL:"Lunch, Monday to Friday",shopsL:"Shops to visit",prioL:"Priority",dietL:"Dietary needs",vgL:"Vegetarian only",
 bcL:"Cook once, eat twice <span class=\"muted small\">(double portion at dinner, next day’s lunch)</span>",menuH:"This week’s menu",
@@ -2353,7 +2364,7 @@ $("imp-yes").onclick=()=>{if(!IMP)return;const keys=DATA_KEYS.filter(k=>Object.h
 const feedKey=j=>(j.updated||"")+"|"+(j.rev||"");
 function refresh(){fetch("offers.json",{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject()).then(j=>{if(j&&Array.isArray(j.offers)&&feedKey(j)>feedKey(FEED)){FEED=j;render()}}).catch(()=>{})}
 // cambio lingua: testi fissi, elenchi e pagina ridisegnati subito, scelta ricordata
-$("lang").onclick=e=>{const b=e.target.closest("button[data-lang]");if(!b||b.dataset.lang===LANG)return;LANG=b.dataset.lang;LS.set("nc-lingua",LANG);applyStatic();fillProducts();fillRegions();if(WL)WL();showVersion();if(UPD)drawUpdate();$("addmsg").textContent="";$("expmsg").textContent="";$("impmsg").textContent="";$("cpmsg").textContent="";render()};
+$("lang").onclick=e=>{const b=e.target.closest("button[data-lang]");if(!b||b.dataset.lang===LANG)return;LANG=b.dataset.lang;LS.set("nc-lingua",LANG);applyStatic();fillProducts();fillRegions();if(WL)WL();if(TOUR)TOUR();showVersion();if(UPD)drawUpdate();$("addmsg").textContent="";$("expmsg").textContent="";$("impmsg").textContent="";$("cpmsg").textContent="";render()};
 function setAppearance(){
  const cream=P.appearance==="cream",root=document.documentElement;
  if(cream){root.dataset.appearance="cream";root.dataset.theme="light"}
@@ -2381,7 +2392,7 @@ showTab(P.tab);update();refresh();
 
 // ---------- versione e aggiornamenti (v51) ----------
 // APP_V/APP_D li scrive strumenti/versione_app.py (anche dal workflow delle offerte): stessa versione di version.json, INFO.md e dell'etichetta vNN.
-const APP_V=54,APP_D="2026-11-24";
+const APP_V=55,APP_D="2026-11-24";
 const SITO="https://lucasalice1997-commits.github.io/spesasmart-wien/";
 function showVersion(){$("app-ver").textContent=L(`Versione ${APP_V} · ${fd(APP_D)} · © Progetto Nocciola`,`Version ${APP_V} · ${fd(APP_D)} · © Progetto Nocciola`)} // v53: avviso di copyright (LICENSE nel repository pubblico)
 let UPD=null; // versione nuova trovata sul sito
@@ -2453,9 +2464,34 @@ function welcome(){
   if(b.dataset.c){c=b.dataset.c;q="";const rs=regionsOf(c);P.region=rs.length?(rs.includes(guess)?guess:P.region&&rs.includes(P.region)?P.region:c):c;step=rs.length?"r":"s";if(!rs.length)P.region=c;draw();return}
   if(b.dataset.r){P.region=b.dataset.r;q="";step="s";draw();return}
   if(b.dataset.back){step=b.dataset.back;q="";draw();return}
-  if(b.id==="wl-go"){box.remove();WL=null;document.body.style.overflow=prevOverflow;fillRegions();fillChains();npUnit();clearPins();update();const t=$("t-"+P.tab);if(t)t.focus({preventScroll:true})}};
+  if(b.id==="wl-go"){box.remove();WL=null;document.body.style.overflow=prevOverflow;fillRegions();fillChains();npUnit();clearPins();update();const t=$("t-"+P.tab);if(t)t.focus({preventScroll:true});tour()}};
  WL=()=>draw(false);draw();
 }
+// ---------- guida (v55): 4 passi sulle schede vere, una riga ciascuno; al primo avvio dopo il benvenuto e da Impostazioni ----------
+let TOUR=null;
+function tour(){
+ if($("tour"))return;
+ const steps=[
+  ["menu",()=>L("Il menu della settimana","Your week's menu"),()=>L("Colazione, pranzo e cena scelti sulle offerte. «Cambia» se un piatto non ti va.","Breakfast, lunch and dinner built on the deals. Tap “Change” if you don’t fancy a dish.")],
+  ["spesa",()=>L("La lista della spesa","Your shopping list"),()=>L("Divisa per negozio, con il prezzo stimato. Spunta mentre compri.","Split by shop, with the estimated price. Tick items as you buy.")],
+  ["offerte",()=>L("Le offerte","The deals"),()=>L("Gli sconti dei supermercati della tua zona. Puoi aggiungere quelli che vedi in negozio.","Discounts from supermarkets near you. You can add the ones you see in the shop.")],
+  ["tana",()=>L("La Tana","The Den"),()=>L("Segna «Cucinato» e guadagni nocciole per il topino.","Tap “Cooked” to earn hazelnuts for the mouse.")]];
+ const back=P.tab;let i=0;
+ const box=document.createElement("div");box.id="tour";box.className="tour";box.setAttribute("role","dialog");box.setAttribute("aria-modal","true");box.setAttribute("aria-labelledby","tour-h");
+ document.body.appendChild(box);
+ const close=()=>{box.remove();TOUR=null;showTab(i>=steps.length-1?"menu":back);const t=$("t-"+P.tab);if(t)t.focus({preventScroll:true})};
+ function draw(focus){
+  const s=steps[i];showTab(s[0]);
+  box.innerHTML=`<div class="tc"><span class="tn">${L("Guida","Guide")} · ${i+1}/${steps.length}</span><h2 id="tour-h" tabindex="-1">${esc(s[1]())}</h2><p>${esc(s[2]())}</p>
+  <div class="tb"><div class="tdots" aria-hidden="true">${steps.map((_,k)=>`<i class="${k===i?"on":""}"></i>`).join("")}</div>
+  <div class="bar" style="margin:0">${i<steps.length-1?`<button type="button" class="btn ghost" data-t="skip">${L("Salta","Skip")}</button>`:""}<button type="button" class="btn" data-t="next">${i<steps.length-1?L("Avanti","Next"):L("Inizia a usarla","Start using it")}</button></div></div></div>`;
+  if(focus!==false)$("tour-h").focus({preventScroll:true});
+ }
+ box.onclick=e=>{const b=e.target.closest("button[data-t]");if(!b)return;if(b.dataset.t==="skip"||i>=steps.length-1){close();return}i++;draw()};
+ box.onkeydown=e=>{if(e.key==="Escape")close()};
+ TOUR=()=>draw(false);draw();
+}
+$("tour-open").onclick=()=>{$("app-settings").open=false;tour()};
 if(FIRST)welcome();
 // a mezzanotte (pagina aperta) le spunte del nuovo giorno si attivano da sole (v22, da ChatGPT)
 function refreshDay(){if(CONF&&renderedDay!==today())render()}
