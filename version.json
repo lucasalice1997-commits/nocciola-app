@@ -1,0 +1,22 @@
+{
+ "v": 53,
+ "data": "2026-11-24",
+ "file": {
+  "index.html": "164071a0b9b53af0e437029d1708c7abd9d1cdb700edf8f5f8f89bed60f4971c",
+  "offers.json": "1e43d029a17a9c3e7167a3bc2eee01a905b4bdd7f7bf9df1912bddc25ae36c77",
+  "sw.js": "809717d40c30edd71e65d1592be631a3f0e4f3b25c1684cd2434f1dd840bea15",
+  "manifest.webmanifest": "654388d1d8a474f3a13e3d1cb92d02f49b53c73c47a94589a5a95d2b074a0ad6",
+  "icon-192.png": "44fd92c2ebec1536d4abe7ea5c444a0943a9f05f118b8ac9c4d1975196d12920",
+  "icon-512.png": "5c249963fa946e77f515736702957cd42a1f2d3a68b1d20b517853ba733fe760",
+  "icon-maskable-192.png": "266d6aad6bab3b146babf688706dd850cbc1cb9d9fd4cee3e8473d422f5419b6",
+  "icon-maskable-512.png": "4b695d82b73f16b9e3a1d6d4cbb9b533b45147838a5621b3051c56ff6dd76498",
+  "favicon-48.png": "896377ab092f81ad3183cf6f510d79f8f9d416cf06cde09893006653ec230503",
+  "apple-touch-icon.png": "eff6f2b7302ac1f6d31172b668a08df730c7723a1fbd4d8b563ec3298949fda2",
+  "fonts/OFL-DMSans.txt": "9af36190332437f5ecd09974de43c1f7c77a310a996cdd8ceb25628b458840e1",
+  "fonts/OFL-Fraunces.txt": "bdf4c22802eaf804f998195871c6b8938aac2ac14b2d78a8bd66a6f1eced833b",
+  "fonts/dm-sans-latin-ext.woff2": "5d18d31d23ada61ebee1d589b11d5da30db9e158f589d5e35221ba2b1a45de54",
+  "fonts/dm-sans-latin.woff2": "ca72d2bcea8f4daa783dbdfa2d9b46068c3ce38168e05918fb867aa453b4f890",
+  "fonts/fraunces-latin-ext.woff2": "a2930b27d13a228bd9ab6a49269b5f800237892ad560cb9dd7fab01b1620f88e",
+  "fonts/fraunces-latin.woff2": "7234ed860a9cc83045413c4faee63c960a8f2d1917adcf728119307d56e0d783"
+ }
+}
