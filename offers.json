@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-24",
+ "updated": "2026-11-25",
  "offers": [
   {
    "s": "Lidl",
@@ -335,7 +335,11 @@
    "p": 7.99,
    "d": "2026-11-26",
    "a": "2026-12-02",
-   "g": 1000
+   "g": 1000,
+   "src": {
+    "url": "https://www.penny.at/kategorie/alle-angebote-99000000?page=18",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -343,7 +347,11 @@
    "p": 7.9833,
    "d": "2026-11-19",
    "a": "2026-11-25",
-   "g": 600
+   "g": 600,
+   "src": {
+    "url": "https://www.penny.at/kategorie/alle-angebote-99000000?page=9",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -351,7 +359,11 @@
    "p": 2.6846,
    "d": "2026-11-26",
    "a": "2026-12-02",
-   "g": 1300
+   "g": 1300,
+   "src": {
+    "url": "https://www.penny.at/kategorie/alle-angebote-99000000?page=12",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -359,7 +371,11 @@
    "p": 4.99,
    "d": "2026-11-26",
    "a": "2026-11-28",
-   "g": 1000
+   "g": 1000,
+   "src": {
+    "url": "https://www.penny.at/kategorie/alle-angebote-99000000?page=7",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -367,7 +383,11 @@
    "p": 9.98,
    "d": "2026-11-19",
    "a": "2026-11-25",
-   "g": 500
+   "g": 500,
+   "src": {
+    "url": "https://www.penny.at/kategorie/alle-angebote-99000000?page=9",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -375,7 +395,11 @@
    "p": 11.95,
    "d": "2026-11-19",
    "a": "2026-11-25",
-   "g": 200
+   "g": 200,
+   "src": {
+    "url": "https://www.penny.at/kategorie/alle-angebote-99000000?page=3",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -383,7 +407,11 @@
    "p": 13.98,
    "d": "2026-11-19",
    "a": "2026-11-25",
-   "g": 500
+   "g": 500,
+   "src": {
+    "url": "https://www.penny.at/kategorie/alle-angebote-99000000?page=5",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -391,7 +419,11 @@
    "p": 1.39,
    "d": "2026-11-30",
    "a": "2026-12-02",
-   "g": 1000
+   "g": 1000,
+   "src": {
+    "url": "https://www.penny.at/kategorie/alle-angebote-99000000?page=1",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -399,7 +431,11 @@
    "p": 0.828,
    "d": "2026-11-19",
    "a": "2026-11-25",
-   "g": 2500
+   "g": 2500,
+   "src": {
+    "url": "https://www.penny.at/kategorie/alle-angebote-99000000?page=16",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -407,7 +443,11 @@
    "p": 1.3267,
    "d": "2026-11-26",
    "a": "2026-11-28",
-   "g": 1500
+   "g": 1500,
+   "src": {
+    "url": "https://www.penny.at/kategorie/alle-angebote-99000000?page=6",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -415,7 +455,11 @@
    "p": 15.9733,
    "d": "2026-11-26",
    "a": "2026-12-02",
-   "g": 375
+   "g": 375,
+   "src": {
+    "url": "https://www.penny.at/kategorie/alle-angebote-99000000?page=9",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -423,7 +467,11 @@
    "p": 2.38,
    "d": "2026-11-26",
    "a": "2026-11-28",
-   "g": 500
+   "g": 500,
+   "src": {
+    "url": "https://www.penny.at/kategorie/alle-angebote-99000000?page=6",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -431,7 +479,11 @@
    "p": 8.99,
    "d": "2026-11-27",
    "a": "2026-11-28",
-   "g": 0
+   "g": 0,
+   "src": {
+    "url": "https://www.penny.at/kategorie/alle-angebote-99000000?page=8",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -439,7 +491,11 @@
    "p": 10.8909,
    "d": "2026-11-26",
    "a": "2026-12-02",
-   "g": 550
+   "g": 550,
+   "src": {
+    "url": "https://www.penny.at/kategorie/alle-angebote-99000000?page=8",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -447,7 +503,11 @@
    "p": 10.8108,
    "d": "2026-11-19",
    "a": "2026-11-25",
-   "g": 185
+   "g": 185,
+   "src": {
+    "url": "https://www.penny.at/kategorie/alle-angebote-99000000?page=12",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -455,7 +515,11 @@
    "p": 3.3222,
    "d": "2026-11-26",
    "a": "2026-12-02",
-   "g": 900
+   "g": 900,
+   "src": {
+    "url": "https://www.penny.at/kategorie/alle-angebote-99000000?page=14",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -463,7 +527,11 @@
    "p": 1.69,
    "d": "2026-11-23",
    "a": "2026-11-25",
-   "g": 0
+   "g": 0,
+   "src": {
+    "url": "https://www.penny.at/kategorie/alle-angebote-99000000?page=14",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -474,7 +542,11 @@
    "g": 800,
    "regions": [
     "IT"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.it/categorie/tutte-le-offerte-99000000?page=1",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -485,18 +557,11 @@
    "g": 160,
    "regions": [
     "IT"
-   ]
-  },
-  {
-   "s": "Penny",
-   "i": "formaggio",
-   "p": 149.0,
-   "d": "2026-11-18",
-   "a": "2026-11-24",
-   "g": 100,
-   "regions": [
-    "CZ"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.it/categorie/tutte-le-offerte-99000000?page=1",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -507,18 +572,11 @@
    "g": 1000,
    "regions": [
     "CZ"
-   ]
-  },
-  {
-   "s": "Penny",
-   "i": "noci",
-   "p": 199.8,
-   "d": "2026-11-18",
-   "a": "2026-11-24",
-   "g": 500,
-   "regions": [
-    "CZ"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.cz/category/vsechny-akce-99000000?page=1",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -529,7 +587,11 @@
    "g": 100,
    "regions": [
     "CZ"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.cz/category/vsechny-akce-99000000?page=1",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -540,7 +602,11 @@
    "g": 1000,
    "regions": [
     "CZ"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.cz/category/vsechny-akce-99000000?page=1",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -551,7 +617,11 @@
    "g": 0,
    "regions": [
     "HU"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=14",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -562,7 +632,71 @@
    "g": 450,
    "regions": [
     "HU"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=13",
+    "letta": "2026-11-25"
+   }
+  },
+  {
+   "s": "Penny",
+   "i": "cipolle",
+   "p": 199.6667,
+   "d": "2026-12-05",
+   "a": "2026-12-06",
+   "g": 3000,
+   "regions": [
+    "HU"
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=15",
+    "letta": "2026-11-25"
+   }
+  },
+  {
+   "s": "Penny",
+   "i": "formaggio",
+   "p": 1350.0,
+   "d": "2026-12-03",
+   "a": "2026-12-06",
+   "g": 100,
+   "regions": [
+    "HU"
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=9",
+    "letta": "2026-11-25"
+   }
+  },
+  {
+   "s": "Penny",
+   "i": "formaggio",
+   "p": 1664.4444,
+   "d": "2026-12-07",
+   "a": "2026-12-09",
+   "g": 450,
+   "regions": [
+    "HU"
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=9",
+    "letta": "2026-11-25"
+   }
+  },
+  {
+   "s": "Penny",
+   "i": "formaggio",
+   "p": 1699.0,
+   "d": "2026-12-03",
+   "a": "2026-12-09",
+   "g": 1000,
+   "regions": [
+    "HU"
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=11",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -573,7 +707,11 @@
    "g": 0,
    "regions": [
     "HU"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=9",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -584,7 +722,26 @@
    "g": 1000,
    "regions": [
     "HU"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=11",
+    "letta": "2026-11-25"
+   }
+  },
+  {
+   "s": "Penny",
+   "i": "formaggio",
+   "p": 2095.0,
+   "d": "2026-12-03",
+   "a": "2026-12-06",
+   "g": 200,
+   "regions": [
+    "HU"
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=1",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -595,7 +752,146 @@
    "g": 400,
    "regions": [
     "HU"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=9",
+    "letta": "2026-11-25"
+   }
+  },
+  {
+   "s": "Penny",
+   "i": "formaggio",
+   "p": 2350.0,
+   "d": "2026-12-03",
+   "a": "2026-12-09",
+   "g": 140,
+   "regions": [
+    "HU"
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=10",
+    "letta": "2026-11-25"
+   }
+  },
+  {
+   "s": "Penny",
+   "i": "formaggio",
+   "p": 2741.6667,
+   "d": "2026-12-03",
+   "a": "2026-12-09",
+   "g": 120,
+   "regions": [
+    "HU"
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=8",
+    "letta": "2026-11-25"
+   }
+  },
+  {
+   "s": "Penny",
+   "i": "formaggio",
+   "p": 2990.0,
+   "d": "2026-12-03",
+   "a": "2026-12-09",
+   "g": 100,
+   "regions": [
+    "HU"
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=8",
+    "letta": "2026-11-25"
+   }
+  },
+  {
+   "s": "Penny",
+   "i": "formaggio",
+   "p": 3193.3333,
+   "d": "2026-12-07",
+   "a": "2026-12-09",
+   "g": 150,
+   "regions": [
+    "HU"
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=9",
+    "letta": "2026-11-25"
+   }
+  },
+  {
+   "s": "Penny",
+   "i": "funghi",
+   "p": 1497.5,
+   "d": "2026-12-03",
+   "a": "2026-12-06",
+   "g": 400,
+   "regions": [
+    "HU"
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=18",
+    "letta": "2026-11-25"
+   }
+  },
+  {
+   "s": "Penny",
+   "i": "latte",
+   "p": 249.0,
+   "d": "2026-12-05",
+   "a": "2026-12-06",
+   "g": 1000,
+   "regions": [
+    "HU"
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=10",
+    "letta": "2026-11-25"
+   }
+  },
+  {
+   "s": "Penny",
+   "i": "latte",
+   "p": 299.0,
+   "d": "2026-12-03",
+   "a": "2026-12-09",
+   "g": 1000,
+   "regions": [
+    "HU"
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=12",
+    "letta": "2026-11-25"
+   }
+  },
+  {
+   "s": "Penny",
+   "i": "maiale",
+   "p": 1111.0,
+   "d": "2026-12-07",
+   "a": "2026-12-09",
+   "g": 0,
+   "regions": [
+    "HU"
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=27",
+    "letta": "2026-11-25"
+   }
+  },
+  {
+   "s": "Penny",
+   "i": "maiale",
+   "p": 1499.0,
+   "d": "2026-12-05",
+   "a": "2026-12-06",
+   "g": 0,
+   "regions": [
+    "HU"
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=10",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -606,7 +902,11 @@
    "g": 500,
    "regions": [
     "HU"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=4",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -617,7 +917,26 @@
    "g": 0,
    "regions": [
     "HU"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=14",
+    "letta": "2026-11-25"
+   }
+  },
+  {
+   "s": "Penny",
+   "i": "mele",
+   "p": 399.0,
+   "d": "2026-12-03",
+   "a": "2026-12-06",
+   "g": 0,
+   "regions": [
+    "HU"
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=25",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -628,7 +947,11 @@
    "g": 1000,
    "regions": [
     "HU"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=5",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -639,7 +962,41 @@
    "g": 0,
    "regions": [
     "HU"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=15",
+    "letta": "2026-11-25"
+   }
+  },
+  {
+   "s": "Penny",
+   "i": "noci",
+   "p": 3495.0,
+   "d": "2026-12-03",
+   "a": "2026-12-09",
+   "g": 200,
+   "regions": [
+    "HU"
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=13",
+    "letta": "2026-11-25"
+   }
+  },
+  {
+   "s": "Penny",
+   "i": "noci",
+   "p": 3990.0,
+   "d": "2026-12-03",
+   "a": "2026-12-09",
+   "g": 100,
+   "regions": [
+    "HU"
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=14",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -650,18 +1007,41 @@
    "g": 200,
    "regions": [
     "HU"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=14",
+    "letta": "2026-11-25"
+   }
+  },
+  {
+   "s": "Penny",
+   "i": "pane",
+   "p": 1172.5,
+   "d": "2026-12-07",
+   "a": "2026-12-09",
+   "g": 400,
+   "regions": [
+    "HU"
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=1",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
    "i": "patate",
-   "p": 245.0,
-   "d": "2026-11-19",
-   "a": "2026-11-25",
+   "p": 249.0,
+   "d": "2026-12-03",
+   "a": "2026-12-09",
    "g": 0,
    "regions": [
     "HU"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=10",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -672,29 +1052,41 @@
    "g": 10000,
    "regions": [
     "HU"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=21",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
    "i": "peperoni",
-   "p": 949.0,
-   "d": "2026-11-30",
-   "a": "2026-12-02",
+   "p": 969.0,
+   "d": "2026-12-05",
+   "a": "2026-12-06",
    "g": 0,
    "regions": [
     "HU"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=14",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
    "i": "peperoni",
    "p": 1598.0,
-   "d": "2026-11-23",
-   "a": "2026-11-25",
+   "d": "2026-12-07",
+   "a": "2026-12-09",
    "g": 500,
    "regions": [
     "HU"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=19",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -705,18 +1097,26 @@
    "g": 0,
    "regions": [
     "HU"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=10",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
-   "i": "pomodori",
-   "p": 799.0,
-   "d": "2026-11-26",
-   "a": "2026-12-02",
+   "i": "pere",
+   "p": 529.0,
+   "d": "2026-12-07",
+   "a": "2026-12-09",
    "g": 0,
    "regions": [
     "HU"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=3",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -727,7 +1127,11 @@
    "g": 100,
    "regions": [
     "HU"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=27",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -738,7 +1142,26 @@
    "g": 100,
    "regions": [
     "HU"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=3",
+    "letta": "2026-11-25"
+   }
+  },
+  {
+   "s": "Penny",
+   "i": "prosciutto",
+   "p": 3890.0,
+   "d": "2026-12-05",
+   "a": "2026-12-06",
+   "g": 100,
+   "regions": [
+    "HU"
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=7",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -749,7 +1172,26 @@
    "g": 100,
    "regions": [
     "HU"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=1",
+    "letta": "2026-11-25"
+   }
+  },
+  {
+   "s": "Penny",
+   "i": "riso",
+   "p": 379.0,
+   "d": "2026-12-03",
+   "a": "2026-12-09",
+   "g": 1000,
+   "regions": [
+    "HU"
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=13",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -760,7 +1202,26 @@
    "g": 1000,
    "regions": [
     "HU"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=13",
+    "letta": "2026-11-25"
+   }
+  },
+  {
+   "s": "Penny",
+   "i": "salmone",
+   "p": 5399.0,
+   "d": "2026-12-03",
+   "a": "2026-12-06",
+   "g": 0,
+   "regions": [
+    "HU"
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=27",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -771,7 +1232,11 @@
    "g": 175,
    "regions": [
     "HU"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=12",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -782,7 +1247,11 @@
    "g": 400,
    "regions": [
     "HU"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=12",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -793,40 +1262,11 @@
    "g": 1000,
    "regions": [
     "HU"
-   ]
-  },
-  {
-   "s": "Penny",
-   "i": "carote",
-   "p": 2.79,
-   "d": "2026-11-18",
-   "a": "2026-11-24",
-   "g": 0,
-   "regions": [
-    "RO"
-   ]
-  },
-  {
-   "s": "Penny",
-   "i": "cavolo",
-   "p": 2.49,
-   "d": "2026-11-18",
-   "a": "2026-11-24",
-   "g": 0,
-   "regions": [
-    "RO"
-   ]
-  },
-  {
-   "s": "Penny",
-   "i": "cipolle",
-   "p": 2.09,
-   "d": "2026-11-18",
-   "a": "2026-11-24",
-   "g": 0,
-   "regions": [
-    "RO"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.hu/category/oesszes-ajanlat-99000000?page=13",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -837,18 +1277,11 @@
    "g": 5000,
    "regions": [
     "RO"
-   ]
-  },
-  {
-   "s": "Penny",
-   "i": "fagioli",
-   "p": 8.4146,
-   "d": "2026-11-18",
-   "a": "2026-11-24",
-   "g": 410,
-   "regions": [
-    "RO"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.ro/categorie/oferte-speciale-99000000?page=1",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -859,7 +1292,11 @@
    "g": 425,
    "regions": [
     "RO"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.ro/categorie/oferte-speciale-99000000?page=5",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -870,18 +1307,11 @@
    "g": 400,
    "regions": [
     "RO"
-   ]
-  },
-  {
-   "s": "Penny",
-   "i": "fagioli",
-   "p": 9.2407,
-   "d": "2026-11-18",
-   "a": "2026-11-24",
-   "g": 540,
-   "regions": [
-    "RO"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.ro/categorie/oferte-speciale-99000000?page=9",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -892,18 +1322,11 @@
    "g": 0,
    "regions": [
     "RO"
-   ]
-  },
-  {
-   "s": "Penny",
-   "i": "formaggio",
-   "p": 32.99,
-   "d": "2026-11-18",
-   "a": "2026-11-24",
-   "g": 1000,
-   "regions": [
-    "RO"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.ro/categorie/oferte-speciale-99000000?page=1",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -914,29 +1337,11 @@
    "g": 500,
    "regions": [
     "RO"
-   ]
-  },
-  {
-   "s": "Penny",
-   "i": "gnocchi",
-   "p": 11.98,
-   "d": "2026-11-18",
-   "a": "2026-11-24",
-   "g": 500,
-   "regions": [
-    "RO"
-   ]
-  },
-  {
-   "s": "Penny",
-   "i": "latte",
-   "p": 4.49,
-   "d": "2026-11-18",
-   "a": "2026-11-24",
-   "g": 1000,
-   "regions": [
-    "RO"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.ro/categorie/oferte-speciale-99000000?page=1",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -947,29 +1352,11 @@
    "g": 1000,
    "regions": [
     "RO"
-   ]
-  },
-  {
-   "s": "Penny",
-   "i": "mandarini",
-   "p": 9.99,
-   "d": "2026-11-18",
-   "a": "2026-11-24",
-   "g": 0,
-   "regions": [
-    "RO"
-   ]
-  },
-  {
-   "s": "Penny",
-   "i": "manzo",
-   "p": 33.98,
-   "d": "2026-11-18",
-   "a": "2026-11-24",
-   "g": 500,
-   "regions": [
-    "RO"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.ro/categorie/oferte-speciale-99000000?page=1",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -980,84 +1367,11 @@
    "g": 0,
    "regions": [
     "RO"
-   ]
-  },
-  {
-   "s": "Penny",
-   "i": "pane",
-   "p": 5.975,
-   "d": "2026-11-18",
-   "a": "2026-11-24",
-   "g": 400,
-   "regions": [
-    "RO"
-   ]
-  },
-  {
-   "s": "Penny",
-   "i": "pane",
-   "p": 7.98,
-   "d": "2026-11-18",
-   "a": "2026-11-24",
-   "g": 500,
-   "regions": [
-    "RO"
-   ]
-  },
-  {
-   "s": "Penny",
-   "i": "pasta",
-   "p": 5.98,
-   "d": "2026-11-18",
-   "a": "2026-11-24",
-   "g": 500,
-   "regions": [
-    "RO"
-   ]
-  },
-  {
-   "s": "Penny",
-   "i": "peperoni",
-   "p": 13.99,
-   "d": "2026-11-18",
-   "a": "2026-11-24",
-   "g": 0,
-   "regions": [
-    "RO"
-   ]
-  },
-  {
-   "s": "Penny",
-   "i": "pere",
-   "p": 8.49,
-   "d": "2026-11-18",
-   "a": "2026-11-24",
-   "g": 0,
-   "regions": [
-    "RO"
-   ]
-  },
-  {
-   "s": "Penny",
-   "i": "pollo",
-   "p": 33.0615,
-   "d": "2026-11-18",
-   "a": "2026-11-24",
-   "g": 650,
-   "regions": [
-    "RO"
-   ]
-  },
-  {
-   "s": "Penny",
-   "i": "prosciutto",
-   "p": 19.9833,
-   "d": "2026-11-18",
-   "a": "2026-11-24",
-   "g": 600,
-   "regions": [
-    "RO"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.ro/categorie/oferte-speciale-99000000?page=1",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Penny",
@@ -1068,7 +1382,11 @@
    "g": 1000,
    "regions": [
     "RO"
-   ]
+   ],
+   "src": {
+    "url": "https://www.penny.ro/categorie/oferte-speciale-99000000?page=6",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Billa",
@@ -1079,7 +1397,11 @@
    "g": 0,
    "regions": [
     "SK"
-   ]
+   ],
+   "src": {
+    "url": "https://www.billa.sk/produkty/leaflet-99000000?page=1",
+    "letta": "2026-11-25"
+   }
   },
   {
    "s": "Billa",
@@ -1090,8 +1412,12 @@
    "g": 0,
    "regions": [
     "SK"
-   ]
+   ],
+   "src": {
+    "url": "https://www.billa.sk/produkty/leaflet-99000000?page=1",
+    "letta": "2026-11-25"
+   }
   }
  ],
- "rev": "2026-11-24T12:02:18"
+ "rev": "2026-11-25T14:42:32"
 }
