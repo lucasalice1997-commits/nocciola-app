@@ -3093,7 +3093,7 @@ if(MISURA_TANA)render();else{showTab(P.tab);update();refresh()}
 
 // ---------- versione e aggiornamenti (v51) ----------
 // APP_V/APP_D li scrive strumenti/versione_app.py (anche dal workflow delle offerte): stessa versione di version.json, INFO.md e dell'etichetta vNN.
-const APP_V=59,APP_D="2026-11-25";
+const APP_V=60,APP_D="2026-11-25";
 const SITO="https://lucasalice1997-commits.github.io/spesasmart-wien/";
 // Il link porta alla ricetta base. Le impostazioni personali e il menu non entrano nell'URL.
 const recipeLink=r=>`${SITO}#${new URLSearchParams({ricetta:r.n})}`;
@@ -3346,7 +3346,13 @@ function misuraTana(){
  pannello.style.cssText="position:fixed;inset:auto 8px 8px;z-index:9999;max-height:50vh;overflow:auto;padding:12px";
  stato.setAttribute("role","status");
  stato.textContent=L("Misura in corso. Tieni la Tana aperta per 30 secondi.", "Measuring. Keep the Den open for 30 seconds.");
- pannello.append(stato);
+ const progresso=document.createElement("progress"), esci=document.createElement("button");
+ progresso.max=durata/1000;progresso.value=0;
+ progresso.setAttribute("aria-label",L("Secondi misurati","Seconds measured"));
+ esci.type="button";esci.className="btn ghost";
+ esci.textContent=L("Esci dalla misura","Exit measurement");
+ esci.onclick=()=>{location.hash=""};
+ pannello.append(stato,progresso,esci);
  for(const elemento of document.body.children)elemento.inert=true;
  document.body.append(pannello);
  const inizio=performance.now();
@@ -3362,11 +3368,20 @@ function misuraTana(){
   function campiona(ora){
    if(interrotta){
     document.removeEventListener("visibilitychange",interrompi);
-    stato.textContent=L("Misura interrotta. Ricarica la pagina e tienila aperta.", "Measurement interrupted. Reload and keep this page open.");
+    progresso.remove();
+    stato.textContent=L("Misura interrotta. Ripeti e tieni la pagina aperta.", "Measurement interrupted. Try again and keep this page open.");
+    const ripeti=document.createElement("button");
+    ripeti.type="button";ripeti.className="btn";
+    ripeti.textContent=L("Ripeti la misura","Try again");
+    ripeti.onclick=()=>location.reload();
+    pannello.insertBefore(ripeti,esci);
     return;
    }
    intervalli.push(ora-ultimo);ultimo=ora;
-   if(ora-primo<durata){requestAnimationFrame(campiona);return}
+   const trascorso=ora-primo;
+   const secondi=Math.min(progresso.max,Math.floor(trascorso/1000));
+   if(progresso.value!==secondi)progresso.value=secondi;
+   if(trascorso<durata){requestAnimationFrame(campiona);return}
    document.removeEventListener("visibilitychange",interrompi);
    const ordinati=intervalli.sort((a,b)=>a-b);
    const percentile=p=>ordinati[Math.ceil(ordinati.length*p)-1].toFixed(1);
@@ -3385,6 +3400,7 @@ function misuraTana(){
     RMQ.matches?L("Movimento ridotto attivo","Reduced motion on"):L("Movimento ridotto disattivo","Reduced motion off"),
     `${innerWidth}×${innerHeight} CSS px · DPR ${devicePixelRatio} · ${navigator.userAgent}`
    ].join("\n");
+   progresso.remove();
    stato.textContent=L("Misura completata.", "Measurement complete.");
    const testo=document.createElement("textarea"), copia=document.createElement("button");
    testo.readOnly=true;testo.value=esito;testo.rows=5;testo.style.width="100%";
@@ -3395,7 +3411,8 @@ function misuraTana(){
     try{await navigator.clipboard.writeText(esito);stato.textContent=L("Risultato copiato.","Result copied.")}
     catch{testo.focus();testo.select();stato.textContent=L("Copia il testo selezionato.","Copy the selected text.")}
    };
-   pannello.append(testo,copia);
+   pannello.insertBefore(testo,esci);
+   pannello.insertBefore(copia,esci);
   }
   requestAnimationFrame(campiona);
  }));
