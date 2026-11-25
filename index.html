@@ -328,6 +328,7 @@ tr.later td{color:var(--muted)}
 .foot .app-ver{white-space:nowrap}
 .upd{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;margin:10px 0;padding:10px 14px;border:2px solid var(--brand);border-radius:var(--r-s,12px);background:var(--surface)}
 .upd b{flex:1 1 0;min-width:0}.upd .btn{white-space:nowrap}.upd .x{margin:0}
+.upd[hidden]{display:none}
 .getapp[hidden]{display:none} /* v51: display:grid vinceva su hidden e il riquadro dell'APK compariva ovunque, anche nell'app */
 .legal p{margin:.5em 0;max-width:70ch;overflow-wrap:anywhere}
 .legal a,#legal-link{color:var(--brand);text-underline-offset:3px}
@@ -539,6 +540,15 @@ body::before{background:var(--bg)}
 .freq b.ok{color:var(--good)}.freq b.warn{color:var(--warn)}.freq b.bad{color:var(--bad)}
 
 /* ============ «Conto chiaro»: la lista della spesa come uno scontrino ============ */
+.shared-recipe{box-sizing:border-box;width:min(32rem,calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;padding:20px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.shared-recipe::backdrop{background:rgba(20,14,10,.55)}
+.shared-recipe input{display:block;width:100%;box-sizing:border-box;margin-block:4px 12px}
+.shared-recipe form{margin-top:12px}
+.shared-recipe .bar form{margin:0}
+.recipe-book ul{padding:0;list-style:none}
+.recipe-book li+li{margin-top:4px}
+.recipe-book li button{text-align:start;min-height:44px}
+.recipe-book select{max-width:100%}
 .receipt-sum{display:grid;grid-template-columns:1fr auto;gap:6px 16px;background:var(--surface);border-radius:var(--r);padding:18px 20px;margin-bottom:14px}
 .receipt-sum .rl{color:var(--muted)}
 .receipt-sum .rv{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
@@ -726,6 +736,9 @@ details[open]>summary::after{transform:translateY(2px) rotate(-135deg)}
 
   <section class="view" id="v-menu" role="tabpanel" aria-labelledby="t-menu">
     <h2 data-i="menuH">Menu della settimana</h2>
+    <div class="bar">
+      <button type="button" class="btn ghost" id="recipe-book-open" data-i="recipeBook">Ricettario</button>
+    </div>
     <div class="sumbar" id="sumbar"></div>
     <p class="small muted" id="menu-coverage" hidden></p>
     <div class="wk" id="wk"></div>
@@ -830,6 +843,8 @@ details[open]>summary::after{transform:translateY(2px) rotate(-135deg)}
   </section>
   <p class="foot"><span data-i="foot">Prezzi di riferimento stimati.</span> <a href="#legal" id="legal-link" data-i="legalL">Privacy e note legali</a> <span class="app-ver" id="app-ver"></span></p>
   <div class="snack" id="snack" role="status" aria-live="polite" hidden></div>
+  <dialog id="recipe-book" class="shared-recipe recipe-book" aria-labelledby="recipe-book-title"></dialog>
+  <dialog id="shared-recipe" class="shared-recipe" aria-labelledby="shared-recipe-title"></dialog>
 </main>
 
 <script>
@@ -863,6 +878,496 @@ const ANIMAL=new Set(["pollo","cosce","maiale","manzo","tonno","salmone","merluz
 
 // ---------- ricette ----------
 // n nome, s pasto (b colazione, p pranzo, s spuntino, c cena), k categoria, v vegetariana, g grammi per un adulto (prima dell'adattamento al fabbisogno), t tempo, d dispensa, p passaggi
+// Ricette T37: ogni gruppo conserva il procedimento comune e le varianti con quantità proprie.
+const RICETTE_T37=[
+ { s:"b",k:"col",v:1,t:"27 min",d:"cannella, olio",p:["Cuoci il riso in acqua fino a renderlo tenero. Affetta la frutta e tieni da parte gli agrumi, se presenti.","Mescola riso, cannella e frutta non agrumata. Passa in una pirofila unta sotto il grill per qualche minuto e completa con gli eventuali spicchi di agrume."],enD:"cinnamon, oil",enP:["Simmer the rice in water until tender. Slice the fruit, keeping any citrus aside.","Combine the rice, cinnamon and non-citrus fruit. Broil for a few minutes in an oiled dish, then top with any citrus segments."],
+  recipes:[
+  ["Riso dolce al forno con mela e banana","Baked breakfast rice with apple and banana",{"riso":65,"mele":140,"banane":85}],
+  ["Riso dolce al forno con pera, banana e arancia","Baked breakfast rice with pear, banana and orange",{"riso":65,"pere":115,"banane":80,"arance":85}],
+  ["Riso dolce al forno con mela e pera","Baked breakfast rice with apple and pear",{"riso":65,"mele":110,"pere":130}],
+  ["Riso dolce al forno con pera e mandarino","Baked breakfast rice with pear and mandarin",{"riso":65,"pere":170,"mandarini":100}],
+  ["Riso dolce al forno con banana e arancia","Baked breakfast rice with banana and orange",{"riso":65,"banane":110,"arance":120}],
+  ["Riso dolce al forno con mela e arancia","Baked breakfast rice with apple and orange",{"riso":65,"mele":155,"arance":110}]
+  ] },
+ { s:"b",k:"col",v:1,t:"12 min + 8 h",d:"cannella",p:["Mescola avena, yogurt e un cucchiaio d’acqua. Copri e lascia in frigorifero durante la notte.","Al mattino taglia la frutta fresca; se ci sono frutta secca e agrumi, macina finemente la prima e sbuccia i secondi. Unisci tutto alla ciotola con cannella."],enD:"cinnamon",enP:["Stir together oats, yogurt and a tablespoon of water. Cover and refrigerate overnight.","Chop the fresh fruit in the morning. Finely grind any nuts and peel any citrus. Stir the toppings into the bowl with cinnamon."],
+  recipes:[
+  ["Avena notturna con mela, mandarino e banana","Overnight oats with apple, mandarin and banana",{"avena":62,"yogurt":175,"mele":90,"mandarini":85,"banane":70}],
+  ["Avena notturna con pera e arancia","Overnight oats with pear and orange",{"avena":62,"yogurt":175,"pere":130,"arance":120}],
+  ["Avena notturna con pera e noci","Overnight oats with pear and nuts",{"avena":62,"yogurt":175,"pere":155,"noci":12}],
+  ["Avena notturna con banana e pera","Overnight oats with banana and pear",{"avena":62,"yogurt":175,"banane":85,"pere":130}],
+  ["Avena notturna con arancia e mandarino","Overnight oats with orange and mandarin",{"avena":62,"yogurt":175,"arance":115,"mandarini":100}],
+  ["Avena notturna con mela e noci","Overnight oats with apple and nuts",{"avena":62,"yogurt":175,"mele":155,"noci":12}]
+  ] },
+ { s:"b",k:"col",v:1,t:"24 min",d:"olio, paprika dolce",p:["Taglia le verdure fini e falle ammorbidire in padella con poco olio e acqua. Sbriciola il tofu e uniscilo alle verdure.","Cuoci l’avena con acqua finché è cremosa. Unisci le verdure e il tofu, condisci con paprika dolce e servi caldo."],enD:"oil, mild paprika",enP:["Finely chop the vegetables and soften in a pan with a little oil and water. Crumble the tofu into the pan.","Cook the oats in water until creamy. Fold through the vegetables and tofu, season with mild paprika and serve hot."],
+  recipes:[
+  ["Avena salata in padella con tofu, porri e funghi","Savoury oat skillet with tofu, leeks and mushrooms",{"avena":62,"tofu":125,"porri":65,"funghi":115}],
+  ["Avena salata in padella con tofu, carote e cavolo","Savoury oat skillet with tofu, carrots and cabbage",{"avena":62,"tofu":125,"carote":80,"cavolo":95}],
+  ["Avena salata in padella con tofu, zucchine e cipolla","Savoury oat skillet with tofu, courgette and onion",{"avena":62,"tofu":125,"zucchine":125,"cipolle":55}],
+  ["Avena salata in padella con tofu, spinaci e pomodori","Savoury oat skillet with tofu, spinach and tomatoes",{"avena":62,"tofu":125,"spinaci":80,"pomodori":120}],
+  ["Avena salata in padella con tofu, peperoni e porri","Savoury oat skillet with tofu, peppers and leeks",{"avena":62,"tofu":125,"peperoni":120,"porri":70}],
+  ["Avena salata in padella con tofu, broccoli e carote","Savoury oat skillet with tofu, broccoli and carrots",{"avena":62,"tofu":125,"broccoli":95,"carote":90}]
+  ] },
+ { s:"b",k:"uova",v:1,t:"24 min",d:"olio, pepe",p:["Lessa le patate a dadini. Taglia le verdure a pezzetti, falle ammorbidire in padella con poco olio e aggiungi le patate scolate.","Sguscia le uova nella padella e cuoci con il coperchio finché albume e tuorlo sono sodi. Servi con pepe a piacere."],enD:"oil, pepper",enP:["Boil the diced potatoes. Chop the vegetables, soften them in a lightly oiled pan and add the drained potatoes.","Crack the eggs into the skillet, cover and cook until the whites and yolks are set. Finish with pepper if you like."],
+  recipes:[
+  ["Padellino di patate e uova con zucchine e porri","Potato and egg breakfast skillet with courgette and leeks",{"uova":115,"patate":200,"zucchine":90,"porri":60}],
+  ["Padellino di patate e uova con pomodori e peperoni","Potato and egg breakfast skillet with tomatoes and peppers",{"uova":115,"patate":200,"pomodori":75,"peperoni":75}],
+  ["Padellino di patate e uova con cavolo e carote","Potato and egg breakfast skillet with cabbage and carrots",{"uova":115,"patate":200,"cavolo":75,"carote":75}],
+  ["Padellino di patate e uova con funghi e spinaci","Potato and egg breakfast skillet with mushrooms and spinach",{"uova":115,"patate":200,"funghi":100,"spinaci":65}],
+  ["Padellino di patate e uova con broccoli e cipolla","Potato and egg breakfast skillet with broccoli and onion",{"uova":115,"patate":200,"broccoli":105,"cipolle":50}],
+  ["Padellino di patate e uova con zucca e porri","Potato and egg breakfast skillet with squash and leeks",{"uova":115,"patate":200,"zucca":100,"porri":60}]
+  ] },
+ { s:"b",k:"col",v:1,t:"21 min",d:"olio, limone, cumino",p:["Taglia e cuoci le verdure in padella con olio e poca acqua finché sono tenere. Tosta il pane.","Schiaccia i ceci scolati con succo di limone e poco cumino. Spalma sul pane e distribuisci sopra le verdure."],enD:"oil, lemon, cumin",enP:["Chop the vegetables and pan-cook with a little oil and water until tender. Toast the bread.","Mash the drained chickpeas with lemon juice and a little cumin. Spread on the toast and top with the vegetables."],
+  recipes:[
+  ["Crostone di ceci, funghi e porri","Chickpea toast with mushrooms and leeks",{"pane":87,"ceci":145,"funghi":105,"porri":65}],
+  ["Crostone di ceci, broccoli e cipolla","Chickpea toast with broccoli and onion",{"pane":87,"ceci":145,"broccoli":110,"cipolle":40}],
+  ["Crostone di ceci, zucca e cavolo","Chickpea toast with squash and cabbage",{"pane":87,"ceci":145,"zucca":125,"cavolo":70}],
+  ["Crostone di ceci, peperoni e pomodori","Chickpea toast with peppers and tomatoes",{"pane":87,"ceci":145,"peperoni":95,"pomodori":90}],
+  ["Crostone di ceci, cavolfiore e carote","Chickpea toast with cauliflower and carrots",{"pane":87,"ceci":145,"cavolfiore":110,"carote":70}],
+  ["Crostone di ceci, spinaci e zucchine","Chickpea toast with spinach and courgette",{"pane":87,"ceci":145,"spinaci":65,"zucchine":110}]
+  ] },
+ { s:"b",k:"col",v:1,t:"23 min",d:"olio, limone, pepe",p:["Lessa le patate e schiacciale grossolanamente con poco olio e succo di limone.","Taglia fine le verdure e cuocile in padella finché sono tenere. In un angolo della padella rosola il tofu a fettine e servi tutto sulle patate."],enD:"oil, lemon, pepper",enP:["Boil the potatoes and crush them roughly with a little oil and lemon juice.","Finely chop the vegetables and cook them in a pan until tender. Brown tofu slices in a free corner of the pan and serve over the potatoes."],
+  recipes:[
+  ["Patate schiacciate e tofu dorato con pomodori e porri","Crushed potatoes and golden tofu with tomatoes and leeks",{"patate":235,"tofu":145,"pomodori":110,"porri":60}],
+  ["Patate schiacciate e tofu dorato con broccoli e cipolle","Crushed potatoes and golden tofu with broccoli and onions",{"patate":235,"tofu":145,"broccoli":120,"cipolle":45}],
+  ["Patate schiacciate e tofu dorato con cavolfiore e carote","Crushed potatoes and golden tofu with cauliflower and carrots",{"patate":235,"tofu":145,"cavolfiore":115,"carote":65}],
+  ["Patate schiacciate e tofu dorato con cavolo e funghi","Crushed potatoes and golden tofu with cabbage and mushrooms",{"patate":235,"tofu":145,"cavolo":90,"funghi":95}],
+  ["Patate schiacciate e tofu dorato con peperoni e spinaci","Crushed potatoes and golden tofu with peppers and spinach",{"patate":235,"tofu":145,"peperoni":95,"spinaci":75}],
+  ["Patate schiacciate e tofu dorato con zucchine e zucca","Crushed potatoes and golden tofu with courgette and squash",{"patate":235,"tofu":145,"zucchine":95,"zucca":100}]
+  ] },
+ { s:"b",k:"col",v:1,t:"33 min",d:"olio, cannella",p:["Scalda il forno a 185 °C. Schiaccia la banana e mescolala con avena e cannella. Grattugia la frutta o gli ortaggi indicati e macina finemente le noci se previste.","Incorpora gli altri ingredienti e premi il composto in uno strato sottile in una teglia unta. Cuoci circa 20 minuti, finché i bordi sono dorati, poi taglia a quadretti."],enD:"oil, cinnamon",enP:["Heat the oven to 185 °C. Mash the banana with oats and cinnamon. Grate the listed fruit or vegetables and finely grind any nuts.","Mix in the remaining ingredients and press into a thin layer in an oiled pan. Bake for about 20 minutes until the edges are golden, then cut into squares."],
+  recipes:[
+  ["Quadrotti d’avena e banana con mela e carota","Banana oat squares with apple and carrot",{"avena":64,"banane":100,"mele":95,"carote":70}],
+  ["Quadrotti d’avena e banana con pera e carota","Banana oat squares with pear and carrot",{"avena":64,"banane":100,"pere":100,"carote":70}],
+  ["Quadrotti d’avena e banana con mela e noci","Banana oat squares with apple and walnuts",{"avena":64,"banane":100,"mele":100,"noci":13}],
+  ["Quadrotti d’avena e banana con pera e noci","Banana oat squares with pear and walnuts",{"avena":64,"banane":100,"pere":100,"noci":13}],
+  ["Quadrotti d’avena e banana con zucca e mela","Banana oat squares with squash and apple",{"avena":64,"banane":100,"zucca":75,"mele":95}],
+  ["Quadrotti d’avena e banana con zucca e pera","Banana oat squares with squash and pear",{"avena":64,"banane":100,"zucca":75,"pere":95}]
+  ] },
+ { s:"b",k:"col",v:1,t:"15 min",d:"cannella, scorza di limone",p:["Tosta il pane. Lavora la ricotta con cannella e poca scorza di limone grattugiata.","Spalma la ricotta sul pane caldo e aggiungi la frutta a fettine o a spicchi. Macina finemente e spargi le noci quando previste."],enD:"cinnamon, lemon zest",enP:["Toast the bread. Beat the ricotta with cinnamon and a little grated lemon zest.","Spread the ricotta on the hot toast and add sliced fruit or citrus segments. Finely grind and scatter any nuts."],
+  recipes:[
+  ["Pane dorato e ricotta con mela e banana","Golden toast and ricotta with apple and banana",{"pane":86,"ricotta":90,"mele":110,"banane":85}],
+  ["Pane dorato e ricotta con pera e mandarino","Golden toast and ricotta with pear and mandarin",{"pane":86,"ricotta":90,"pere":115,"mandarini":100}],
+  ["Pane dorato e ricotta con banana e arancia","Golden toast and ricotta with banana and orange",{"pane":86,"ricotta":90,"banane":90,"arance":100}],
+  ["Pane dorato e ricotta con mela e pera","Golden toast and ricotta with apple and pear",{"pane":86,"ricotta":90,"mele":95,"pere":105}],
+  ["Pane dorato e ricotta con arancia e noci","Golden toast and ricotta with orange and nuts",{"pane":86,"ricotta":90,"arance":145,"noci":12}],
+  ["Pane dorato e ricotta con banana e noci","Golden toast and ricotta with banana and nuts",{"pane":86,"ricotta":90,"banane":110,"noci":12}]
+  ] },
+ { s:"b",k:"col",v:1,t:"24 min",d:"olio, cumino, limone",p:["Cuoci il riso in acqua. Affetta sottilmente le verdure e falle ammorbidire in una padella con olio e poca acqua.","Aggiungi i fagioli scolati e il cumino, scalda bene e unisci il riso. Termina con qualche goccia di limone."],enD:"oil, cumin, lemon",enP:["Cook the rice in water. Finely slice the vegetables and soften them in a pan with a little oil and water.","Add the drained beans and cumin, heat through and stir in the rice. Finish with a little lemon juice."],
+  recipes:[
+  ["Riso del mattino con fagioli, carote e porri","Breakfast rice and beans with carrots and leeks",{"riso":62,"fagioli":140,"carote":85,"porri":55}],
+  ["Riso del mattino con fagioli, pomodori e cavolo","Breakfast rice and beans with tomatoes and cabbage",{"riso":62,"fagioli":140,"pomodori":80,"cavolo":85}],
+  ["Riso del mattino con fagioli, zucca e cipolla","Breakfast rice and beans with squash and onion",{"riso":62,"fagioli":140,"zucca":125,"cipolle":45}],
+  ["Riso del mattino con fagioli, cavolfiore e spinaci","Breakfast rice and beans with cauliflower and spinach",{"riso":62,"fagioli":140,"cavolfiore":100,"spinaci":65}],
+  ["Riso del mattino con fagioli, funghi e peperoni","Breakfast rice and beans with mushrooms and peppers",{"riso":62,"fagioli":140,"funghi":85,"peperoni":85}],
+  ["Riso del mattino con fagioli, zucchine e broccoli","Breakfast rice and beans with courgette and broccoli",{"riso":62,"fagioli":140,"zucchine":85,"broccoli":90}]
+  ] },
+ { s:"b",k:"col",v:1,t:"30 min",d:"olio, rosmarino, paprika dolce",p:["Scalda il forno a 205 °C. Taglia le patate e le verdure a dadini piccoli, condisci con olio e arrostisci finché le patate iniziano a dorarsi.","Unisci i ceci ben scolati e asciugati, il rosmarino e la paprika. Rimetti in forno fino a doratura."],enD:"oil, rosemary, mild paprika",enP:["Heat the oven to 205 °C. Dice the potatoes and vegetables, dress with oil and roast until the potatoes start to colour.","Add the well-drained, dried chickpeas, rosemary and paprika. Return to the oven until golden."],
+  recipes:[
+  ["Colazione di ceci croccanti e patate con broccoli e porri","Crispy chickpea and potato breakfast with broccoli and leeks",{"ceci":150,"patate":200,"broccoli":105,"porri":55}],
+  ["Colazione di ceci croccanti e patate con zucchine e carote","Crispy chickpea and potato breakfast with courgette and carrots",{"ceci":150,"patate":200,"zucchine":85,"carote":85}],
+  ["Colazione di ceci croccanti e patate con peperoni e cipolla","Crispy chickpea and potato breakfast with peppers and onion",{"ceci":150,"patate":200,"peperoni":100,"cipolle":55}],
+  ["Colazione di ceci croccanti e patate con zucca e cavolfiore","Crispy chickpea and potato breakfast with squash and cauliflower",{"ceci":150,"patate":200,"zucca":90,"cavolfiore":85}],
+  ["Colazione di ceci croccanti e patate con funghi e cavolo","Crispy chickpea and potato breakfast with mushrooms and cabbage",{"ceci":150,"patate":200,"funghi":90,"cavolo":75}],
+  ["Colazione di ceci croccanti e patate con cavoletti e carote","Crispy chickpea and potato breakfast with Brussels sprouts and carrots",{"ceci":150,"patate":200,"cavoletti":100,"carote":70}]
+  ] },
+ { s:"s",k:"col",v:1,t:"15 min",d:"cannella, scorza di limone",p:["Taglia la frutta a pezzetti. Cuoci per qualche minuto i pezzi di mela o pera, se presenti, con pochissima acqua e cannella.","Lascia intiepidire la frutta cotta e alternala in un bicchiere con lo yogurt e il resto della frutta. Completa con scorza di limone."],enD:"cinnamon, lemon zest",enP:["Dice the fruit. Briefly cook any apple or pear pieces with a splash of water and cinnamon.","Let the cooked fruit cool slightly, then layer it in a glass with the yogurt and remaining fruit. Finish with lemon zest."],
+  recipes:[
+  ["Coppa di yogurt con mela e pera","Yogurt cup with apple and pear",{"yogurt":105,"mele":85,"pere":85}],
+  ["Coppa di yogurt con mela e banana","Yogurt cup with apple and banana",{"yogurt":105,"mele":100,"banane":65}],
+  ["Coppa di yogurt con pera e mandarino","Yogurt cup with pear and mandarin",{"yogurt":105,"pere":100,"mandarini":85}],
+  ["Coppa di yogurt con mela e arancia","Yogurt cup with apple and orange",{"yogurt":105,"mele":95,"arance":85}],
+  ["Coppa di yogurt con banana e mandarino","Yogurt cup with banana and mandarin",{"yogurt":105,"banane":75,"mandarini":95}],
+  ["Coppa di yogurt con arancia e pera","Yogurt cup with orange and pear",{"yogurt":105,"arance":95,"pere":95}]
+  ] },
+ { s:"s",k:"col",v:1,t:"19 min",d:"carta da forno, cannella, limone",p:["Scalda il forno a 190 °C. Taglia mela e pera, se previste, a fette sottili e la banana in pezzi grandi. Sbuccia gli agrumi.","Chiudi la frutta in un cartoccio con cannella e limone. Cuoci finché è tenera, poi apri facendo attenzione al vapore."],enD:"baking paper, cinnamon, lemon",enP:["Heat the oven to 190 °C. Thinly slice any apples and pears, cut banana into large pieces and peel any citrus.","Seal the fruit in a baking-paper parcel with cinnamon and lemon. Bake until tender, then open carefully to let the steam escape."],
+  recipes:[
+  ["Frutta al cartoccio con mela, pera e mandarino","Fruit parcels with apple, pear and mandarin",{"mele":90,"pere":90,"mandarini":85}],
+  ["Frutta al cartoccio con pera e banana","Fruit parcels with pear and banana",{"pere":125,"banane":75}],
+  ["Frutta al cartoccio con mela e arancia","Fruit parcels with apple and orange",{"mele":125,"arance":100}],
+  ["Frutta al cartoccio con pera e mandarino","Fruit parcels with pear and mandarin",{"pere":135,"mandarini":95}],
+  ["Frutta al cartoccio con banana e arancia","Fruit parcels with banana and orange",{"banane":95,"arance":120}],
+  ["Frutta al cartoccio con mela, pera e limone","Fruit parcels with apple, pear and lemon",{"mele":95,"pere":110}]
+  ] },
+ { s:"s",k:"col",v:1,t:"24 min",d:"olio, paprika dolce",p:["Asciuga i ceci scolati. Taglia le verdure piccole e mescolale con i ceci, poco olio e paprika dolce.","Stendi tutto in uno strato su una teglia e cuoci a 205 °C finché le verdure sono tenere e i ceci dorati. Per i piccoli, servi i ceci schiacciati."],enD:"oil, mild paprika",enP:["Pat the drained chickpeas dry. Chop the vegetables into small pieces and toss with the chickpeas, a little oil and mild paprika.","Spread on a tray in one layer and roast at 205 °C until the vegetables are tender and chickpeas golden. Serve chickpeas crushed to young children."],
+  recipes:[
+  ["Ceci arrostiti con zucca e cipolla","Roasted chickpea snack with squash and onion",{"ceci":85,"zucca":100,"cipolle":30}],
+  ["Ceci arrostiti con cavolfiore e carote","Roasted chickpea snack with cauliflower and carrots",{"ceci":85,"cavolfiore":85,"carote":70}],
+  ["Ceci arrostiti con porri e peperoni","Roasted chickpea snack with leeks and peppers",{"ceci":85,"porri":40,"peperoni":95}],
+  ["Ceci arrostiti con broccoli e cavolo","Roasted chickpea snack with broccoli and cabbage",{"ceci":85,"broccoli":80,"cavolo":75}],
+  ["Ceci arrostiti con zucchine e funghi","Roasted chickpea snack with courgette and mushrooms",{"ceci":85,"zucchine":90,"funghi":70}],
+  ["Ceci arrostiti con cavoletti e zucca","Roasted chickpea snack with Brussels sprouts and squash",{"ceci":85,"cavoletti":75,"zucca":90}]
+  ] },
+ { s:"s",k:"col",v:1,t:"12 min",d:"olio, limone, origano",p:["Schiaccia i fagioli scolati con olio, succo di limone e origano. Aggiungi poca acqua per ottenere una crema liscia.","Lava le verdure e tagliale a fettine per accompagnare la crema. Se serve, ammorbidisci al vapore i pezzi più duri prima di servirli."],enD:"oil, lemon, oregano",enP:["Mash the drained beans with oil, lemon juice and oregano. Thin with a little water to make a smooth dip.","Wash and slice the vegetables for dipping. Steam any firm pieces to soften them if needed before serving."],
+  recipes:[
+  ["Crema di fagioli da intingere con cetrioli e carote","Bean dip with cucumber and carrots",{"fagioli":90,"cetrioli":115,"carote":70}],
+  ["Crema di fagioli da intingere con cetrioli e peperoni","Bean dip with cucumber and peppers",{"fagioli":90,"cetrioli":100,"peperoni":75}],
+  ["Crema di fagioli da intingere con pomodori e carote","Bean dip with tomatoes and carrots",{"fagioli":90,"pomodori":110,"carote":70}],
+  ["Crema di fagioli da intingere con pomodori e cetrioli","Bean dip with tomatoes and cucumber",{"fagioli":90,"pomodori":95,"cetrioli":100}],
+  ["Crema di fagioli da intingere con peperoni e carote","Bean dip with peppers and carrots",{"fagioli":90,"peperoni":100,"carote":70}],
+  ["Crema di fagioli da intingere con peperoni e pomodori","Bean dip with peppers and tomatoes",{"fagioli":90,"peperoni":85,"pomodori":110}]
+  ] },
+ { s:"s",k:"col",v:1,t:"15 min",d:"olio, limone, timo",p:["Asciuga il tofu e fallo dorare a cubetti in padella con poco olio.","Aggiungi le verdure tagliate fini e continua a cuocere finché sono tenere. Condisci con limone e timo."],enD:"oil, lemon, thyme",enP:["Pat the tofu dry, dice and brown in a little oil.","Add the finely sliced vegetables and cook until tender. Season with lemon and thyme."],
+  recipes:[
+  ["Bocconcini di tofu con porri e zucchine","Tofu snack bites with leeks and courgette",{"tofu":85,"porri":45,"zucchine":100}],
+  ["Bocconcini di tofu con pomodori e peperoni","Tofu snack bites with tomatoes and peppers",{"tofu":85,"pomodori":85,"peperoni":85}],
+  ["Bocconcini di tofu con funghi e cipolla","Tofu snack bites with mushrooms and onion",{"tofu":85,"funghi":100,"cipolle":40}],
+  ["Bocconcini di tofu con zucca e carote","Tofu snack bites with squash and carrots",{"tofu":85,"zucca":80,"carote":70}],
+  ["Bocconcini di tofu con broccoli e cavoletti","Tofu snack bites with broccoli and Brussels sprouts",{"tofu":85,"broccoli":80,"cavoletti":70}],
+  ["Bocconcini di tofu con cavolfiore e spinaci","Tofu snack bites with cauliflower and spinach",{"tofu":85,"cavolfiore":90,"spinaci":60}]
+  ] },
+ { s:"s",k:"col",v:1,t:"27 min",d:"olio, cannella",p:["Taglia la frutta a pezzetti. Metti i pezzi di mela o pera sul fondo di una pirofila; aggiungi l’eventuale banana.","Mescola l’avena con poco olio e cannella e cospargila sulla frutta. Cuoci a 190 °C finché è dorata. Aggiungi gli spicchi di agrume, se previsti, dopo la cottura."],enD:"oil, cinnamon",enP:["Dice the fruit. Place any apple or pear pieces in a small oven dish and add any banana.","Mix the oats with a little oil and cinnamon, then scatter over the fruit. Bake at 190 °C until golden. Add any citrus segments after baking."],
+  recipes:[
+  ["Crumble piccolo con mela e pera","Mini crumble with apple and pear",{"avena":25,"mele":105,"pere":95}],
+  ["Crumble piccolo con mela, pera e banana","Mini crumble with apple, pear and banana",{"avena":25,"mele":90,"pere":80,"banane":65}],
+  ["Crumble piccolo con pera e banana","Mini crumble with pear and banana",{"avena":25,"pere":125,"banane":65}],
+  ["Crumble piccolo con mela e mandarino","Mini crumble with apple and mandarin",{"avena":25,"mele":130,"mandarini":90}],
+  ["Crumble piccolo con pera e arancia","Mini crumble with pear and orange",{"avena":25,"pere":135,"arance":95}],
+  ["Crumble piccolo con mela e arancia","Mini crumble with apple and orange",{"avena":25,"mele":130,"arance":95}]
+  ] },
+ { s:"s",k:"col",v:1,t:"10 min",d:"olio, limone, pepe",p:["Taglia il pane a fette e tostalo. Affetta sottilmente le verdure dopo averle lavate.","Distribuisci le verdure sopra i crostini e condisci con poco olio, limone e pepe. Servi appena fatto."],enD:"oil, lemon, pepper",enP:["Slice and toast the bread. Wash and finely slice the vegetables.","Top the bread with the vegetables and dress with a little oil, lemon and pepper. Serve immediately."],
+  recipes:[
+  ["Crostini con pomodoro e cetriolo","Snack toasts with tomato and cucumber",{"pane":46,"pomodori":75,"cetrioli":65}],
+  ["Crostini con pomodoro e insalata","Snack toasts with tomato and lettuce",{"pane":46,"pomodori":95,"insalata":50}],
+  ["Crostini con peperone e insalata","Snack toasts with pepper and lettuce",{"pane":46,"peperoni":85,"insalata":55}],
+  ["Crostini con cetriolo e carota","Snack toasts with cucumber and carrot",{"pane":46,"cetrioli":80,"carote":60}],
+  ["Crostini con pomodoro e peperone","Snack toasts with tomato and pepper",{"pane":46,"pomodori":80,"peperoni":70}],
+  ["Crostini con cetriolo e insalata","Snack toasts with cucumber and lettuce",{"pane":46,"cetrioli":90,"insalata":60}]
+  ] },
+ { s:"s",k:"col",v:1,t:"21 min",d:"olio, aceto, timo",p:["Taglia le patate a spicchi piccoli e lessale fino a renderle tenere. Taglia le verdure fini e cuocile brevemente al vapore.","Scola tutto e servi tiepido con una vinaigrette di olio, un goccio di aceto e timo."],enD:"oil, vinegar, thyme",enP:["Cut the potatoes into small wedges and boil until tender. Finely slice the vegetables and steam briefly.","Drain and serve warm with a vinaigrette of oil, a splash of vinegar and thyme."],
+  recipes:[
+  ["Spicchi di patate con broccoli e peperoni","Potato wedges with broccoli and peppers",{"patate":140,"broccoli":75,"peperoni":60}],
+  ["Spicchi di patate con cavolo e carote","Potato wedges with cabbage and carrots",{"patate":140,"cavolo":65,"carote":65}],
+  ["Spicchi di patate con zucca e porri","Potato wedges with squash and leeks",{"patate":140,"zucca":80,"porri":45}],
+  ["Spicchi di patate con cavolfiore e cavoletti","Potato wedges with cauliflower and Brussels sprouts",{"patate":140,"cavolfiore":60,"cavoletti":60}],
+  ["Spicchi di patate con spinaci e zucchine","Potato wedges with spinach and courgette",{"patate":140,"spinaci":55,"zucchine":85}],
+  ["Spicchi di patate con cavolfiore e carote","Potato wedges with cauliflower and carrots",{"patate":140,"cavolfiore":70,"carote":65}]
+  ] },
+ { s:"p",k:"legumi",v:1,t:"31 min",d:"olio, limone, coriandolo macinato",p:["Cuoci il riso. Taglia le verdure a pezzetti e arrostiscile a 205 °C con olio e coriandolo finché diventano tenere.","Aggiungi alla teglia i ceci scolati e il riso. Scalda qualche minuto e condisci con il limone."],enD:"oil, lemon, ground coriander",enP:["Cook the rice. Chop the vegetables and roast at 205 °C with oil and ground coriander until tender.","Toss the drained chickpeas and rice into the tray. Heat for a few minutes and season with lemon."],
+  recipes:[
+  ["Riso al forno con ceci, peperoni e cavolfiore","Baked rice with chickpeas, peppers and cauliflower",{"riso":75,"ceci":160,"peperoni":115,"cavolfiore":120}],
+  ["Riso al forno con ceci, zucca e cipolle","Baked rice with chickpeas, squash and onions",{"riso":75,"ceci":160,"zucca":155,"cipolle":60}],
+  ["Riso al forno con ceci, cavoletti e carote","Baked rice with chickpeas, Brussels sprouts and carrots",{"riso":75,"ceci":160,"cavoletti":125,"carote":95}],
+  ["Riso al forno con ceci, porri e broccoli","Baked rice with chickpeas, leeks and broccoli",{"riso":75,"ceci":160,"porri":85,"broccoli":145}],
+  ["Riso al forno con ceci, funghi e zucchine","Baked rice with chickpeas, mushrooms and courgettes",{"riso":75,"ceci":160,"funghi":120,"zucchine":125}],
+  ["Riso al forno con ceci, cavolo e peperoni","Baked rice with chickpeas, cabbage and peppers",{"riso":75,"ceci":160,"cavolo":110,"peperoni":120}]
+  ] },
+ { s:"p",k:"legumi",v:1,t:"38 min",d:"olio, cumino, coriandolo macinato, limone",p:["Sciacqua le lenticchie e cuocile in acqua secondo la confezione finché sono tenere. Cuoci il riso a parte.","Rosola le verdure a dadini con olio, cumino e coriandolo. Unisci riso e lenticchie scolati e termina con limone."],enD:"oil, cumin, ground coriander, lemon",enP:["Rinse the lentils and simmer in water according to the packet until tender. Cook the rice separately.","Sauté the diced vegetables in oil, cumin and coriander. Toss with the drained rice and lentils and finish with lemon."],
+  recipes:[
+  ["Riso e lenticchie speziati con cipolle e broccoli","Spiced rice and lentils with onions and broccoli",{"riso":68,"lenticchie":70,"cipolle":85,"broccoli":150}],
+  ["Riso e lenticchie speziati con porri e cavolo","Spiced rice and lentils with leeks and cabbage",{"riso":68,"lenticchie":70,"porri":100,"cavolo":140}],
+  ["Riso e lenticchie speziati con zucca e spinaci","Spiced rice and lentils with squash and spinach",{"riso":68,"lenticchie":70,"zucca":145,"spinaci":85}],
+  ["Riso e lenticchie speziati con peperoni e carote","Spiced rice and lentils with peppers and carrots",{"riso":68,"lenticchie":70,"peperoni":125,"carote":95}],
+  ["Riso e lenticchie speziati con funghi e cavolfiore","Spiced rice and lentils with mushrooms and cauliflower",{"riso":68,"lenticchie":70,"funghi":115,"cavolfiore":135}],
+  ["Riso e lenticchie speziati con zucchine e cavoletti","Spiced rice and lentils with courgettes and Brussels sprouts",{"riso":68,"lenticchie":70,"zucchine":125,"cavoletti":110}]
+  ] },
+ { s:"c",k:"legumi",v:1,t:"26 min",d:"olio, cumino, paprika dolce",p:["Rosola le verdure a cubetti con olio, cumino e paprika. Unisci passata e fagioli scolati e lascia sobbollire finché il sugo è denso.","Cuoci il riso a parte e servilo con il sugo di verdure e fagioli."],enD:"oil, cumin, mild paprika",enP:["Sauté the diced vegetables in oil with cumin and paprika. Add passata and drained beans and simmer until thick.","Cook the rice separately and spoon over the vegetable and bean sauce."],
+  recipes:[
+  ["Riso al pomodoro e fagioli con peperoni e porri","Tomato rice and beans with peppers and leeks",{"riso":76,"fagioli":170,"passata":125,"peperoni":125,"porri":80}],
+  ["Riso al pomodoro e fagioli con cavolo e carote","Tomato rice and beans with cabbage and carrots",{"riso":76,"fagioli":170,"passata":125,"cavolo":110,"carote":100}],
+  ["Riso al pomodoro e fagioli con spinaci e porri","Tomato rice and beans with spinach and leeks",{"riso":76,"fagioli":170,"passata":125,"spinaci":100,"porri":85}],
+  ["Riso al pomodoro e fagioli con cavolfiore e zucca","Tomato rice and beans with cauliflower and squash",{"riso":76,"fagioli":170,"passata":125,"cavolfiore":120,"zucca":110}],
+  ["Riso al pomodoro e fagioli con broccoli e funghi","Tomato rice and beans with broccoli and mushrooms",{"riso":76,"fagioli":170,"passata":125,"broccoli":125,"funghi":100}],
+  ["Riso al pomodoro e fagioli con zucchine e peperoni","Tomato rice and beans with courgettes and peppers",{"riso":76,"fagioli":170,"passata":125,"zucchine":120,"peperoni":100}]
+  ] },
+ { s:"p",k:"legumi",v:1,t:"30 min",d:"olio, limone, zenzero",p:["Cuoci il riso e scolalo bene. Asciuga il tofu, taglialo a cubetti e rosolalo in una padella larga.","Aggiungi le verdure a pezzetti e saltale finché sono tenere. Unisci riso e zenzero, mescola a fuoco vivace e completa con il limone."],enD:"oil, lemon, ginger",enP:["Cook and drain the rice. Pat the tofu dry, dice and brown in a large skillet.","Add finely chopped vegetables and stir-fry until tender. Toss in the rice and ginger over high heat and finish with lemon."],
+  recipes:[
+  ["Riso saltato al limone con tofu, porri e carote","Lemon fried rice with tofu, leeks and carrots",{"riso":80,"tofu":155,"porri":90,"carote":120}],
+  ["Riso saltato al limone con tofu, broccoli e peperoni","Lemon fried rice with tofu, broccoli and peppers",{"riso":80,"tofu":155,"broccoli":125,"peperoni":110}],
+  ["Riso saltato al limone con tofu, funghi e cavolfiore","Lemon fried rice with tofu, mushrooms and cauliflower",{"riso":80,"tofu":155,"funghi":115,"cavolfiore":130}],
+  ["Riso saltato al limone con tofu, cavolo e cipolla","Lemon fried rice with tofu, cabbage and onion",{"riso":80,"tofu":155,"cavolo":145,"cipolle":70}],
+  ["Riso saltato al limone con tofu, zucca e zucchine","Lemon fried rice with tofu, squash and courgettes",{"riso":80,"tofu":155,"zucca":120,"zucchine":115}],
+  ["Riso saltato al limone con tofu, cavoletti e spinaci","Lemon fried rice with tofu, Brussels sprouts and spinach",{"riso":80,"tofu":155,"cavoletti":130,"spinaci":80}]
+  ] },
+ { s:"c",k:"uova",v:1,t:"32 min",d:"olio, pepe, limone",p:["Affetta le verdure e falle ammorbidire in una casseruola. Unisci il riso e aggiungi un mestolo di acqua calda alla volta finché il riso è tenero.","Cuoci le uova finché il tuorlo è sodo, sbucciale e tagliale a spicchi. Servile sul riso con pepe e limone."],enD:"oil, pepper, lemon",enP:["Slice and soften the vegetables in a saucepan. Stir in the rice and add hot water a ladle at a time until the rice is tender.","Boil the eggs until the yolks are set, then peel and quarter. Serve over the rice with pepper and lemon."],
+  recipes:[
+  ["Riso cremoso con uova sode, porri e funghi","Creamy rice with hard-boiled eggs, leeks and mushrooms",{"riso":72,"uova":110,"porri":100,"funghi":140}],
+  ["Riso cremoso con uova sode, spinaci e carote","Creamy rice with hard-boiled eggs, spinach and carrots",{"riso":72,"uova":110,"spinaci":95,"carote":125}],
+  ["Riso cremoso con uova sode, zucchine e cipolla","Creamy rice with hard-boiled eggs, courgettes and onion",{"riso":72,"uova":110,"zucchine":150,"cipolle":60}],
+  ["Riso cremoso con uova sode, cavolfiore e zucca","Creamy rice with hard-boiled eggs, cauliflower and squash",{"riso":72,"uova":110,"cavolfiore":115,"zucca":125}],
+  ["Riso cremoso con uova sode, broccoli e peperoni","Creamy rice with hard-boiled eggs, broccoli and peppers",{"riso":72,"uova":110,"broccoli":125,"peperoni":110}],
+  ["Riso cremoso con uova sode, cavolo e porri","Creamy rice with hard-boiled eggs, cabbage and leeks",{"riso":72,"uova":110,"cavolo":135,"porri":80}]
+  ] },
+ { s:"p",k:"formaggi",v:1,t:"27 min",d:"olio, aceto, origano",p:["Cuoci il riso. Taglia le verdure e saltale in padella con poco olio finché sono tenere.","Scola la mozzarella, spezzettala e aggiungila al riso tiepido e alle verdure. Condisci con origano e aceto."],enD:"oil, vinegar, oregano",enP:["Cook the rice. Chop and sauté the vegetables in a little oil until tender.","Drain and tear the mozzarella. Toss it with the warm rice and vegetables and dress with oregano and vinegar."],
+  recipes:[
+  ["Riso tiepido con mozzarella, zucchine e pomodori","Warm rice bowl with mozzarella, courgettes and tomatoes",{"riso":80,"mozzarella":85,"zucchine":120,"pomodori":125}],
+  ["Riso tiepido con mozzarella, peperoni e cipolla","Warm rice bowl with mozzarella, peppers and onion",{"riso":80,"mozzarella":85,"peperoni":140,"cipolle":65}],
+  ["Riso tiepido con mozzarella, funghi e porri","Warm rice bowl with mozzarella, mushrooms and leeks",{"riso":80,"mozzarella":85,"funghi":130,"porri":100}],
+  ["Riso tiepido con mozzarella, broccoli e carote","Warm rice bowl with mozzarella, broccoli and carrots",{"riso":80,"mozzarella":85,"broccoli":125,"carote":105}],
+  ["Riso tiepido con mozzarella, zucca e spinaci","Warm rice bowl with mozzarella, squash and spinach",{"riso":80,"mozzarella":85,"zucca":145,"spinaci":90}],
+  ["Riso tiepido con mozzarella, cavolfiore e cavolo","Warm rice bowl with mozzarella, cauliflower and cabbage",{"riso":80,"mozzarella":85,"cavolfiore":130,"cavolo":105}]
+  ] },
+ { s:"c",k:"legumi",v:1,t:"36 min",d:"olio, paprika dolce, aglio",p:["Taglia le patate nel senso della lunghezza, lessale quasi fino a cottura, poi scava il centro con un cucchiaio.","Cuoci in padella le verdure a dadini. Mescolale con i fagioli scolati, la polpa delle patate, paprika e poco aglio. Riempi le metà e gratina finché sono dorate."],enD:"oil, mild paprika, garlic",enP:["Halve the potatoes lengthwise and boil until almost tender, then scoop out the centres.","Sauté the diced vegetables. Mix with the drained beans, potato flesh, paprika and a little garlic. Fill the halves and broil until golden."],
+  recipes:[
+  ["Barchette di patate ripiene di fagioli, peperoni e cipolla","Stuffed potato halves with beans, peppers and onion",{"patate":265,"fagioli":170,"peperoni":130,"cipolle":70}],
+  ["Barchette di patate ripiene di fagioli, spinaci e funghi","Stuffed potato halves with beans, spinach and mushrooms",{"patate":265,"fagioli":170,"spinaci":100,"funghi":135}],
+  ["Barchette di patate ripiene di fagioli, cavolo e carote","Stuffed potato halves with beans, cabbage and carrots",{"patate":265,"fagioli":170,"cavolo":110,"carote":110}],
+  ["Barchette di patate ripiene di fagioli, porri e zucca","Stuffed potato halves with beans, leeks and squash",{"patate":265,"fagioli":170,"porri":95,"zucca":145}],
+  ["Barchette di patate ripiene di fagioli, zucchine e broccoli","Stuffed potato halves with beans, courgettes and broccoli",{"patate":265,"fagioli":170,"zucchine":125,"broccoli":115}],
+  ["Barchette di patate ripiene di fagioli, cavolfiore e pomodori","Stuffed potato halves with beans, cauliflower and tomatoes",{"patate":265,"fagioli":170,"cavolfiore":115,"pomodori":120}]
+  ] },
+ { s:"c",k:"legumi",v:1,t:"41 min",d:"olio, timo, pepe",p:["Cuoci le lenticchie secondo la confezione finché sono tenere. Lessa le patate, scolale e schiacciale con olio.","Fai appassire le verdure tagliate a dadini, mescola con le lenticchie e il timo, copri con il purè in una pirofila e passa sotto il grill fino a doratura."],enD:"oil, thyme, pepper",enP:["Cook the lentils according to the packet until tender. Boil and drain the potatoes, then mash with a little oil.","Soften the diced vegetables and mix with the lentils and thyme. Transfer to a dish, cover with mash and broil until golden."],
+  recipes:[
+  ["Sformato di lenticchie e patate con funghi e cipolla","Lentil and potato bake with mushrooms and onion",{"patate":235,"lenticchie":75,"funghi":130,"cipolle":75}],
+  ["Sformato di lenticchie e patate con zucchine e peperoni","Lentil and potato bake with courgettes and peppers",{"patate":235,"lenticchie":75,"zucchine":120,"peperoni":120}],
+  ["Sformato di lenticchie e patate con cavolfiore e porri","Lentil and potato bake with cauliflower and leeks",{"patate":235,"lenticchie":75,"cavolfiore":125,"porri":95}],
+  ["Sformato di lenticchie e patate con broccoli e spinaci","Lentil and potato bake with broccoli and spinach",{"patate":235,"lenticchie":75,"broccoli":130,"spinaci":95}],
+  ["Sformato di lenticchie e patate con zucca e funghi","Lentil and potato bake with squash and mushrooms",{"patate":235,"lenticchie":75,"zucca":135,"funghi":110}],
+  ["Sformato di lenticchie e patate con cavoletti e carote","Lentil and potato bake with Brussels sprouts and carrots",{"patate":235,"lenticchie":75,"cavoletti":120,"carote":110}]
+  ] },
+ { s:"p",k:"legumi",v:1,t:"30 min",d:"olio, aceto, prezzemolo",p:["Lessa le patate a dadini e cuoci le verdure tagliate al vapore finché sono tenere ma ancora consistenti.","Rosola il tofu a fettine sottili su entrambi i lati. Unisci alle patate e alle verdure e condisci con olio, aceto e prezzemolo."],enD:"oil, vinegar, parsley",enP:["Boil diced potatoes and steam the chopped vegetables until just tender.","Brown thin slices of tofu on both sides. Toss with the potatoes and vegetables and dress with oil, vinegar and parsley."],
+  recipes:[
+  ["Insalata tiepida di patate e tofu con cavolfiore e broccoli","Warm potato and tofu salad with cauliflower and broccoli",{"patate":245,"tofu":160,"cavolfiore":120,"broccoli":125}],
+  ["Insalata tiepida di patate e tofu con carote e cavoletti","Warm potato and tofu salad with carrots and Brussels sprouts",{"patate":245,"tofu":160,"carote":120,"cavoletti":110}],
+  ["Insalata tiepida di patate e tofu con zucca e cavolo","Warm potato and tofu salad with squash and cabbage",{"patate":245,"tofu":160,"zucca":130,"cavolo":105}],
+  ["Insalata tiepida di patate e tofu con peperoni e zucchine","Warm potato and tofu salad with peppers and courgettes",{"patate":245,"tofu":160,"peperoni":115,"zucchine":125}],
+  ["Insalata tiepida di patate e tofu con porri e zucca","Warm potato and tofu salad with leeks and squash",{"patate":245,"tofu":160,"porri":100,"zucca":130}],
+  ["Insalata tiepida di patate e tofu con spinaci e carote","Warm potato and tofu salad with spinach and carrots",{"patate":245,"tofu":160,"spinaci":95,"carote":135}]
+  ] },
+ { s:"c",k:"uova",v:1,t:"39 min",d:"olio, noce moscata, pepe",p:["Lessa le patate a fettine e fai appassire le verdure tagliate in padella. Sbatti le uova con noce moscata e pepe.","Versa tutto in una piccola pirofila unta e cuoci a 185 °C, finché il centro è rappreso e raggiunge 71 °C."],enD:"oil, nutmeg, pepper",enP:["Boil the sliced potatoes and soften the chopped vegetables in a pan. Beat the eggs with nutmeg and pepper.","Transfer to a small oiled baking dish and bake at 185 °C until the centre sets and reaches 71 °C."],
+  recipes:[
+  ["Frittata di patate al forno con cavolfiore e porri","Baked potato frittata with cauliflower and leeks",{"patate":230,"uova":130,"cavolfiore":125,"porri":75}],
+  ["Frittata di patate al forno con broccoli e peperoni","Baked potato frittata with broccoli and peppers",{"patate":230,"uova":130,"broccoli":110,"peperoni":115}],
+  ["Frittata di patate al forno con zucca e funghi","Baked potato frittata with squash and mushrooms",{"patate":230,"uova":130,"zucca":120,"funghi":100}],
+  ["Frittata di patate al forno con cavoletti e cipolle","Baked potato frittata with Brussels sprouts and onions",{"patate":230,"uova":130,"cavoletti":140,"cipolle":65}],
+  ["Frittata di patate al forno con zucchine e spinaci","Baked potato frittata with courgettes and spinach",{"patate":230,"uova":130,"zucchine":125,"spinaci":75}],
+  ["Frittata di patate al forno con cavolo e pomodori","Baked potato frittata with cabbage and tomatoes",{"patate":230,"uova":130,"cavolo":115,"pomodori":100}]
+  ] },
+ { s:"c",k:"formaggi",v:1,t:"35 min",d:"olio, timo, pepe",p:["Lessa le patate a fettine. Salta le verdure a pezzetti in padella con poco olio e timo.","Disponi patate e verdure in una pirofila a strati, distribuendo la ricotta tra uno strato e l’altro. Passa a 200 °C fino a doratura."],enD:"oil, thyme, pepper",enP:["Boil the sliced potatoes. Sauté the chopped vegetables with a little oil and thyme.","Layer the potatoes and vegetables in a dish, dotting ricotta between the layers. Roast at 200 °C until golden."],
+  recipes:[
+  ["Patate gratinate con ricotta, porri e carote","Potato and ricotta gratin with leeks and carrots",{"patate":280,"ricotta":105,"porri":100,"carote":105}],
+  ["Patate gratinate con ricotta, cavolo e funghi","Potato and ricotta gratin with cabbage and mushrooms",{"patate":280,"ricotta":105,"cavolo":105,"funghi":125}],
+  ["Patate gratinate con ricotta, spinaci e cavolfiore","Potato and ricotta gratin with spinach and cauliflower",{"patate":280,"ricotta":105,"spinaci":90,"cavolfiore":130}],
+  ["Patate gratinate con ricotta, broccoli e cavoletti","Potato and ricotta gratin with broccoli and Brussels sprouts",{"patate":280,"ricotta":105,"broccoli":120,"cavoletti":110}],
+  ["Patate gratinate con ricotta, zucca e cipolla","Potato and ricotta gratin with squash and onion",{"patate":280,"ricotta":105,"zucca":155,"cipolle":60}],
+  ["Patate gratinate con ricotta, peperoni e zucchine","Potato and ricotta gratin with peppers and courgettes",{"patate":280,"ricotta":105,"peperoni":125,"zucchine":120}]
+  ] },
+ { s:"p",k:"legumi",v:1,t:"26 min",d:"olio, limone, aglio",p:["Cuoci la pasta. Frulla metà dei ceci scolati con limone, poco aglio e un mestolino dell’acqua di cottura.","Salta le verdure a pezzetti in padella finché sono tenere. Salta la pasta con verdure, crema e ceci rimasti."],enD:"oil, lemon, garlic",enP:["Cook the pasta. Blend half the drained chickpeas with lemon, a little garlic and a small ladle of pasta water.","Pan-cook the chopped vegetables until tender. Toss the pasta with the vegetables, chickpea cream and remaining chickpeas."],
+  recipes:[
+  ["Pasta alla crema di ceci con cavolo e cipolla","Pasta with chickpea cream and cabbage and onion",{"pasta":87,"ceci":145,"cavolo":145,"cipolle":65}],
+  ["Pasta alla crema di ceci con carote e cavoletti","Pasta with chickpea cream and carrots and Brussels sprouts",{"pasta":87,"ceci":145,"carote":110,"cavoletti":130}],
+  ["Pasta alla crema di ceci con pomodori e spinaci","Pasta with chickpea cream and tomatoes and spinach",{"pasta":87,"ceci":145,"pomodori":120,"spinaci":95}],
+  ["Pasta alla crema di ceci con zucchine e porri","Pasta with chickpea cream and courgettes and leeks",{"pasta":87,"ceci":145,"zucchine":145,"porri":85}],
+  ["Pasta alla crema di ceci con funghi e broccoli","Pasta with chickpea cream and mushrooms and broccoli",{"pasta":87,"ceci":145,"funghi":115,"broccoli":135}],
+  ["Pasta alla crema di ceci con peperoni e zucca","Pasta with chickpea cream and peppers and squash",{"pasta":87,"ceci":145,"peperoni":120,"zucca":105}]
+  ] },
+ { s:"p",k:"legumi",v:1,t:"35 min",d:"olio, origano, alloro",p:["Cuoci le lenticchie secondo la confezione. Rosola le verdure tagliate a dadini molto piccoli e unisci passata, lenticchie scolate e alloro.","Fai restringere il ragù. Cuoci la pasta e condiscila con il sugo senza la foglia d’alloro e con origano."],enD:"oil, oregano, bay leaf",enP:["Cook the lentils according to the packet. Brown the finely diced vegetables and add passata, drained lentils and bay leaf.","Simmer until thick. Cook the pasta, remove the bay leaf and toss the pasta with the sauce and oregano."],
+  recipes:[
+  ["Pasta al ragù di lenticchie con porri e funghi","Pasta with lentil ragù and leeks and mushrooms",{"pasta":86,"lenticchie":65,"passata":130,"porri":85,"funghi":125}],
+  ["Pasta al ragù di lenticchie con peperoni e cipolla","Pasta with lentil ragù and peppers and onion",{"pasta":86,"lenticchie":65,"passata":130,"peperoni":135,"cipolle":55}],
+  ["Pasta al ragù di lenticchie con carote e cavolo","Pasta with lentil ragù and carrots and cabbage",{"pasta":86,"lenticchie":65,"passata":130,"carote":110,"cavolo":100}],
+  ["Pasta al ragù di lenticchie con zucchine e spinaci","Pasta with lentil ragù and courgettes and spinach",{"pasta":86,"lenticchie":65,"passata":130,"zucchine":140,"spinaci":85}],
+  ["Pasta al ragù di lenticchie con cavolfiore e zucca","Pasta with lentil ragù and cauliflower and squash",{"pasta":86,"lenticchie":65,"passata":130,"cavolfiore":120,"zucca":115}],
+  ["Pasta al ragù di lenticchie con broccoli e porri","Pasta with lentil ragù and broccoli and leeks",{"pasta":86,"lenticchie":65,"passata":130,"broccoli":130,"porri":80}]
+  ] },
+ { s:"c",k:"formaggi",v:1,t:"33 min",d:"olio, noce moscata, pepe",p:["Cuoci la pasta al dente e fai ammorbidire in padella le verdure tritate. Lavora la ricotta con poca acqua della pasta, noce moscata e pepe.","Mescola gli ingredienti e distribuisci in una teglia unta. Passa in forno a 205 °C fino a doratura."],enD:"oil, nutmeg, pepper",enP:["Cook the pasta until al dente and soften the chopped vegetables in a pan. Beat ricotta with a little pasta water, nutmeg and pepper.","Combine in an oiled baking dish. Bake at 205 °C until golden."],
+  recipes:[
+  ["Pasta gratinata alla ricotta con cavolo e carote","Ricotta pasta gratin with cabbage and carrots",{"pasta":84,"ricotta":90,"cavolo":100,"carote":115}],
+  ["Pasta gratinata alla ricotta con spinaci e broccoli","Ricotta pasta gratin with spinach and broccoli",{"pasta":84,"ricotta":90,"spinaci":100,"broccoli":135}],
+  ["Pasta gratinata alla ricotta con porri e pomodori","Ricotta pasta gratin with leeks and tomatoes",{"pasta":84,"ricotta":90,"porri":100,"pomodori":130}],
+  ["Pasta gratinata alla ricotta con funghi e zucca","Ricotta pasta gratin with mushrooms and squash",{"pasta":84,"ricotta":90,"funghi":110,"zucca":135}],
+  ["Pasta gratinata alla ricotta con cavolfiore e peperoni","Ricotta pasta gratin with cauliflower and peppers",{"pasta":84,"ricotta":90,"cavolfiore":125,"peperoni":125}],
+  ["Pasta gratinata alla ricotta con zucchine e cipolla","Ricotta pasta gratin with courgettes and onion",{"pasta":84,"ricotta":90,"zucchine":155,"cipolle":75}]
+  ] },
+ { s:"p",k:"legumi",v:1,t:"24 min",d:"olio, aceto, origano",p:["Cuoci la pasta e scolala bene. Lava le verdure, tagliale a dadini o striscioline e scola i fagioli.","Mescola la pasta ancora tiepida con verdure, fagioli, olio, aceto e origano."],enD:"oil, vinegar, oregano",enP:["Cook and drain the pasta. Wash the vegetables and cut into small dice or strips. Drain the beans.","While the pasta is still warm, toss it with the vegetables, beans, oil, vinegar and oregano."],
+  recipes:[
+  ["Pasta tiepida con fagioli, pomodori e cetrioli","Warm pasta and bean salad with tomatoes and cucumber",{"pasta":88,"fagioli":155,"pomodori":125,"cetrioli":110}],
+  ["Pasta tiepida con fagioli, cetrioli e carote","Warm pasta and bean salad with cucumber and carrots",{"pasta":88,"fagioli":155,"cetrioli":130,"carote":85}],
+  ["Pasta tiepida con fagioli, pomodori e insalata","Warm pasta and bean salad with tomatoes and lettuce",{"pasta":88,"fagioli":155,"pomodori":140,"insalata":65}],
+  ["Pasta tiepida con fagioli, peperoni e carote","Warm pasta and bean salad with peppers and carrots",{"pasta":88,"fagioli":155,"peperoni":125,"carote":85}],
+  ["Pasta tiepida con fagioli, cetrioli e peperoni","Warm pasta and bean salad with cucumber and peppers",{"pasta":88,"fagioli":155,"cetrioli":115,"peperoni":120}],
+  ["Pasta tiepida con fagioli, carote e insalata","Warm pasta and bean salad with carrots and lettuce",{"pasta":88,"fagioli":155,"carote":125,"insalata":75}]
+  ] },
+ { s:"p",k:"legumi",v:1,t:"27 min",d:"olio, limone, menta, cumino",p:["Prepara il couscous secondo la confezione. Cuoci le verdure a dadini in padella con olio e cumino; unisci i ceci scolati verso fine cottura.","Sgrana il couscous, incorpora verdure e ceci e condisci con limone e menta."],enD:"oil, lemon, mint, cumin",enP:["Prepare the couscous according to the packet. Sauté the diced vegetables with oil and cumin, adding the drained chickpeas towards the end.","Fluff the couscous, fold in vegetables and chickpeas and dress with lemon and mint."],
+  recipes:[
+  ["Couscous di ceci con cavolfiore e spinaci","Chickpea couscous with cauliflower and spinach",{"couscous":78,"ceci":145,"cavolfiore":140,"spinaci":85}],
+  ["Couscous di ceci con zucca e cavolo","Chickpea couscous with squash and cabbage",{"couscous":78,"ceci":145,"zucca":130,"cavolo":105}],
+  ["Couscous di ceci con carote e peperoni","Chickpea couscous with carrots and peppers",{"couscous":78,"ceci":145,"carote":105,"peperoni":115}],
+  ["Couscous di ceci con funghi e porri","Chickpea couscous with mushrooms and leeks",{"couscous":78,"ceci":145,"funghi":120,"porri":110}],
+  ["Couscous di ceci con broccoli e pomodori","Chickpea couscous with broccoli and tomatoes",{"couscous":78,"ceci":145,"broccoli":135,"pomodori":100}],
+  ["Couscous di ceci con zucchine e cavoletti","Chickpea couscous with courgettes and Brussels sprouts",{"couscous":78,"ceci":145,"zucchine":130,"cavoletti":110}]
+  ] },
+ { s:"p",k:"legumi",v:1,t:"32 min",d:"olio, limone, paprika dolce",p:["Cuoci le lenticchie secondo la confezione e prepara il couscous a parte. Taglia le verdure molto fini e cuocile in padella con paprika e un poco d’acqua.","Unisci le lenticchie scolate alle verdure. Sgrana il couscous, incorpora il condimento e completa con succo di limone."],enD:"oil, lemon, mild paprika",enP:["Cook the lentils according to the packet and prepare couscous separately. Finely dice the vegetables and sauté with paprika and a little water.","Stir the drained lentils into the vegetables. Fluff the couscous, fold in the toppings and finish with lemon juice."],
+  recipes:[
+  ["Couscous e lenticchie al limone con cavoletti e porri","Lemon couscous and lentils with Brussels sprouts and leeks",{"couscous":73,"lenticchie":75,"cavoletti":130,"porri":90}],
+  ["Couscous e lenticchie al limone con zucca e cavolfiore","Lemon couscous and lentils with squash and cauliflower",{"couscous":73,"lenticchie":75,"zucca":120,"cavolfiore":125}],
+  ["Couscous e lenticchie al limone con broccoli e carote","Lemon couscous and lentils with broccoli and carrots",{"couscous":73,"lenticchie":75,"broccoli":125,"carote":100}],
+  ["Couscous e lenticchie al limone con peperoni e funghi","Lemon couscous and lentils with peppers and mushrooms",{"couscous":73,"lenticchie":75,"peperoni":115,"funghi":120}],
+  ["Couscous e lenticchie al limone con cavolo e cipolla","Lemon couscous and lentils with cabbage and onion",{"couscous":73,"lenticchie":75,"cavolo":140,"cipolle":65}],
+  ["Couscous e lenticchie al limone con zucchine e spinaci","Lemon couscous and lentils with courgettes and spinach",{"couscous":73,"lenticchie":75,"zucchine":135,"spinaci":85}]
+  ] },
+ { s:"c",k:"legumi",v:1,t:"29 min",d:"olio, limone, aglio",p:["Scalda il forno a 205 °C. Asciuga e taglia a cubetti il tofu. Affetta le verdure, mescolale con tofu, olio e poco aglio e arrostisci fino a doratura.","Prepara e sgrana il couscous secondo la confezione. Servi con tofu, verdure e succo di limone."],enD:"oil, lemon, garlic",enP:["Heat the oven to 205 °C. Pat dry and dice the tofu. Slice the vegetables, toss with tofu, oil and a little garlic and roast until golden.","Prepare and fluff the couscous according to the packet. Serve with tofu, vegetables and lemon juice."],
+  recipes:[
+  ["Couscous con tofu arrostito, broccoli e porri","Couscous with roast tofu, broccoli and leeks",{"couscous":81,"tofu":155,"broccoli":140,"porri":85}],
+  ["Couscous con tofu arrostito, zucca e peperoni","Couscous with roast tofu, squash and peppers",{"couscous":81,"tofu":155,"zucca":125,"peperoni":115}],
+  ["Couscous con tofu arrostito, cavoletti e carote","Couscous with roast tofu, Brussels sprouts and carrots",{"couscous":81,"tofu":155,"cavoletti":135,"carote":105}],
+  ["Couscous con tofu arrostito, cavolfiore e funghi","Couscous with roast tofu, cauliflower and mushrooms",{"couscous":81,"tofu":155,"cavolfiore":135,"funghi":120}],
+  ["Couscous con tofu arrostito, zucchine e cipolla","Couscous with roast tofu, courgettes and onion",{"couscous":81,"tofu":155,"zucchine":145,"cipolle":65}],
+  ["Couscous con tofu arrostito, cavolo e pomodori","Couscous with roast tofu, cabbage and diced tomatoes",{"couscous":81,"tofu":155,"cavolo":135,"pomodori":105}]
+  ] },
+ { s:"p",k:"legumi",v:1,t:"25 min",d:"olio, aglio, limone",p:["Stufa le verdure a pezzetti con olio e poca acqua. Scalda i fagioli scolati, poi schiacciali con poco aglio e limone.","Tosta il pane, spalma uno strato di fagioli e completa con le verdure."],enD:"oil, garlic, lemon",enP:["Braise the chopped vegetables with oil and a splash of water. Warm and mash the drained beans with a little garlic and lemon.","Toast the bread, spread with the bean mash and pile on the vegetables."],
+  recipes:[
+  ["Pane caldo con fagioli schiacciati, cavolo e porri","Warm toast with mashed beans, cabbage and leeks",{"pane":95,"fagioli":175,"cavolo":125,"porri":85}],
+  ["Pane caldo con fagioli schiacciati, pomodori e peperoni","Warm toast with mashed beans, tomatoes and peppers",{"pane":95,"fagioli":175,"pomodori":115,"peperoni":125}],
+  ["Pane caldo con fagioli schiacciati, funghi e spinaci","Warm toast with mashed beans, mushrooms and spinach",{"pane":95,"fagioli":175,"funghi":120,"spinaci":90}],
+  ["Pane caldo con fagioli schiacciati, cavolfiore e cipolla","Warm toast with mashed beans, cauliflower and onion",{"pane":95,"fagioli":175,"cavolfiore":135,"cipolle":70}],
+  ["Pane caldo con fagioli schiacciati, zucca e zucchine","Warm toast with mashed beans, squash and courgettes",{"pane":95,"fagioli":175,"zucca":120,"zucchine":120}],
+  ["Pane caldo con fagioli schiacciati, broccoli e carote","Warm toast with mashed beans, broccoli and carrots",{"pane":95,"fagioli":175,"broccoli":130,"carote":100}]
+  ] },
+ { s:"p",k:"formaggi",v:1,t:"20 min",d:"olio, origano, pepe",p:["Affetta le verdure, falle dorare in padella con poco olio e insaporiscile con origano.","Farcisci il pane con le verdure e la mozzarella ben scolata. Scalda il panino su entrambi i lati finché il ripieno è caldo."],enD:"oil, oregano, pepper",enP:["Slice the vegetables, brown them in a lightly oiled pan and season with oregano.","Fill the bread with the vegetables and drained mozzarella. Toast on both sides until the filling is hot."],
+  recipes:[
+  ["Panino caldo con mozzarella, peperoni e cipolle","Hot mozzarella sandwich with peppers and onions",{"pane":105,"mozzarella":100,"peperoni":135,"cipolle":65}],
+  ["Panino caldo con mozzarella, funghi e spinaci","Hot mozzarella sandwich with mushrooms and spinach",{"pane":105,"mozzarella":100,"funghi":130,"spinaci":80}],
+  ["Panino caldo con mozzarella, broccoli e porri","Hot mozzarella sandwich with broccoli and leeks",{"pane":105,"mozzarella":100,"broccoli":120,"porri":95}],
+  ["Panino caldo con mozzarella, zucca e cavolo","Hot mozzarella sandwich with squash and cabbage",{"pane":105,"mozzarella":100,"zucca":130,"cavolo":95}],
+  ["Panino caldo con mozzarella, pomodori e zucchine","Hot mozzarella sandwich with tomatoes and courgettes",{"pane":105,"mozzarella":100,"pomodori":110,"zucchine":105}],
+  ["Panino caldo con mozzarella, carote e cavolfiore","Hot mozzarella sandwich with carrots and cauliflower",{"pane":105,"mozzarella":100,"carote":95,"cavolfiore":115}]
+  ] },
+ { s:"c",k:"legumi",v:1,t:"28 min",d:"olio, aglio, salvia",p:["Affetta finemente le verdure e cuocile in padella con olio e un po’ d’acqua. Aggiungi i ceci scolati e togli dal fuoco.","Cuoci e scola gli gnocchi. Saltali con aglio e salvia fino a doratura, poi mescolali con ceci e verdure."],enD:"oil, garlic, sage",enP:["Thinly slice the vegetables and pan-cook with oil and a little water. Add the drained chickpeas and remove from the heat.","Cook and drain the gnocchi. Pan-fry with garlic and sage until golden, then toss with chickpeas and vegetables."],
+  recipes:[
+  ["Gnocchi dorati con ceci, broccoli e funghi","Golden gnocchi with chickpeas, broccoli and mushrooms",{"gnocchi":195,"ceci":145,"broccoli":135,"funghi":115}],
+  ["Gnocchi dorati con ceci, cavolfiore e spinaci","Golden gnocchi with chickpeas, cauliflower and spinach",{"gnocchi":195,"ceci":145,"cavolfiore":140,"spinaci":85}],
+  ["Gnocchi dorati con ceci, cavolo e carote","Golden gnocchi with chickpeas, cabbage and carrots",{"gnocchi":195,"ceci":145,"cavolo":120,"carote":100}],
+  ["Gnocchi dorati con ceci, peperoni e cipolla","Golden gnocchi with chickpeas, peppers and onion",{"gnocchi":195,"ceci":145,"peperoni":135,"cipolle":65}],
+  ["Gnocchi dorati con ceci, zucca e porri","Golden gnocchi with chickpeas, squash and leeks",{"gnocchi":195,"ceci":145,"zucca":130,"porri":90}],
+  ["Gnocchi dorati con ceci, zucchine e cavoletti","Golden gnocchi with chickpeas, courgettes and Brussels sprouts",{"gnocchi":195,"ceci":145,"zucchine":125,"cavoletti":110}]
+  ] },
+ { s:"c",k:"formaggi",v:1,t:"29 min",d:"olio, origano, pepe",p:["Cuoci le verdure a dadini in padella con poco olio, aggiungi la passata e falla restringere. Cuoci gli gnocchi secondo la confezione.","Versa gnocchi e sugo in una pirofila, cospargi con mozzarella e origano e fai gratinare sotto il grill."],enD:"oil, oregano, pepper",enP:["Pan-cook diced vegetables in a little oil, add passata and reduce. Cook the gnocchi according to the packet.","Combine gnocchi and sauce in a dish, top with mozzarella and oregano and broil until golden."],
+  recipes:[
+  ["Gnocchi al forno con mozzarella, zucchine e funghi","Baked mozzarella gnocchi with courgettes and mushrooms",{"gnocchi":200,"mozzarella":85,"passata":120,"zucchine":115,"funghi":110}],
+  ["Gnocchi al forno con mozzarella, peperoni e spinaci","Baked mozzarella gnocchi with peppers and spinach",{"gnocchi":200,"mozzarella":85,"passata":120,"peperoni":120,"spinaci":90}],
+  ["Gnocchi al forno con mozzarella, zucca e cavolo","Baked mozzarella gnocchi with squash and cabbage",{"gnocchi":200,"mozzarella":85,"passata":120,"zucca":135,"cavolo":105}],
+  ["Gnocchi al forno con mozzarella, broccoli e porri","Baked mozzarella gnocchi with broccoli and leeks",{"gnocchi":200,"mozzarella":85,"passata":120,"broccoli":125,"porri":90}],
+  ["Gnocchi al forno con mozzarella, cavoletti e carote","Baked mozzarella gnocchi with Brussels sprouts and carrots",{"gnocchi":200,"mozzarella":85,"passata":120,"cavoletti":115,"carote":100}],
+  ["Gnocchi al forno con mozzarella, cavolfiore e cipolle","Baked mozzarella gnocchi with cauliflower and onions",{"gnocchi":200,"mozzarella":85,"passata":120,"cavolfiore":140,"cipolle":60}]
+  ] },
+ { s:"c",k:"legumi",v:1,t:"43 min",d:"olio, alloro, pepe",p:["Taglia le verdure da brodo, le patate e il resto delle verdure a dadini. Falle ammorbidire con poco olio in una pentola.","Aggiungi lenticchie sciacquate, alloro e acqua fino a coprire. Cuoci finché lenticchie e patate sono tenere; rimuovi l’alloro e servi."],enD:"oil, bay leaf, pepper",enP:["Dice the soup vegetables, potatoes and remaining vegetables. Soften in a pot with a little oil.","Cover with water and add rinsed lentils and a bay leaf. Simmer until the lentils and potatoes are tender, then remove the bay leaf and serve."],
+  recipes:[
+  ["Zuppa di lenticchie e ortaggi con zucca e porri","Lentil and garden vegetable soup with squash and leeks",{"lenticchie":83,"patate":165,"soffritto":90,"zucca":145,"porri":65}],
+  ["Zuppa di lenticchie e ortaggi con cavolo e cipolla","Lentil and garden vegetable soup with cabbage and onion",{"lenticchie":83,"patate":165,"soffritto":90,"cavolo":125,"cipolle":55}],
+  ["Zuppa di lenticchie e ortaggi con spinaci e funghi","Lentil and garden vegetable soup with spinach and mushrooms",{"lenticchie":83,"patate":165,"soffritto":90,"spinaci":85,"funghi":105}],
+  ["Zuppa di lenticchie e ortaggi con cavolfiore e peperoni","Lentil and garden vegetable soup with cauliflower and peppers",{"lenticchie":83,"patate":165,"soffritto":90,"cavolfiore":110,"peperoni":100}],
+  ["Zuppa di lenticchie e ortaggi con broccoli e cavoletti","Lentil and garden vegetable soup with broccoli and Brussels sprouts",{"lenticchie":83,"patate":165,"soffritto":90,"broccoli":100,"cavoletti":110}],
+  ["Zuppa di lenticchie e ortaggi con zucchine e porri","Lentil and garden vegetable soup with courgettes and leeks",{"lenticchie":83,"patate":165,"soffritto":90,"zucchine":130,"porri":80}]
+  ] },
+ { s:"c",k:"legumi",v:1,t:"32 min",d:"olio, rosmarino, aglio",p:["Stufa le verdure a cubetti con poco olio e aglio. Aggiungi passata, fagioli scolati, rosmarino e acqua e cuoci fino a quando le verdure sono tenere.","Tosta il pane a cubetti, versaci sopra la zuppa e lascia riposare un minuto prima di servire."],enD:"oil, rosemary, garlic",enP:["Braise the diced vegetables in a little oil and garlic. Add passata, drained beans, rosemary and water and simmer until the vegetables are tender.","Toast the diced bread, ladle over the soup and let stand for a minute before serving."],
+  recipes:[
+  ["Zuppa rustica di fagioli e pane con cavolo e porri","Rustic bean and bread soup with cabbage and leeks",{"fagioli":185,"passata":130,"pane":75,"cavolo":135,"porri":90}],
+  ["Zuppa rustica di fagioli e pane con carote e broccoli","Rustic bean and bread soup with carrots and broccoli",{"fagioli":185,"passata":130,"pane":75,"carote":110,"broccoli":125}],
+  ["Zuppa rustica di fagioli e pane con zucca e funghi","Rustic bean and bread soup with squash and mushrooms",{"fagioli":185,"passata":130,"pane":75,"zucca":135,"funghi":105}],
+  ["Zuppa rustica di fagioli e pane con peperoni e cipolla","Rustic bean and bread soup with peppers and onion",{"fagioli":185,"passata":130,"pane":75,"peperoni":140,"cipolle":70}],
+  ["Zuppa rustica di fagioli e pane con zucchine e spinaci","Rustic bean and bread soup with courgettes and spinach",{"fagioli":185,"passata":130,"pane":75,"zucchine":130,"spinaci":85}],
+  ["Zuppa rustica di fagioli e pane con cavolfiore e cavoletti","Rustic bean and bread soup with cauliflower and Brussels sprouts",{"fagioli":185,"passata":130,"pane":75,"cavolfiore":115,"cavoletti":110}]
+  ] },
+ { s:"c",k:"legumi",v:1,t:"36 min",d:"olio, zenzero, paprika, coriandolo",p:["Taglia patate e verdure a cubetti e rosolale con olio e zenzero. Aggiungi passata, paprika e un po’ d’acqua e cuoci coperto.","Quando le patate sono tenere, unisci i ceci scolati, scalda bene e termina con coriandolo."],enD:"oil, ginger, paprika, coriander",enP:["Brown diced potatoes and vegetables in oil with ginger. Stir in passata, paprika and a little water and simmer covered.","When the potatoes are tender, stir in the drained chickpeas, heat through and finish with coriander."],
+  recipes:[
+  ["Ceci e patate in umido con cavolfiore e porri","Chickpea and potato stew with cauliflower and leeks",{"ceci":175,"patate":220,"passata":125,"cavolfiore":125,"porri":95}],
+  ["Ceci e patate in umido con spinaci e zucca","Chickpea and potato stew with spinach and squash",{"ceci":175,"patate":220,"passata":125,"spinaci":90,"zucca":135}],
+  ["Ceci e patate in umido con cavoletti e peperoni","Chickpea and potato stew with Brussels sprouts and peppers",{"ceci":175,"patate":220,"passata":125,"cavoletti":110,"peperoni":120}],
+  ["Ceci e patate in umido con broccoli e cipolla","Chickpea and potato stew with broccoli and onion",{"ceci":175,"patate":220,"passata":125,"broccoli":130,"cipolle":65}],
+  ["Ceci e patate in umido con pomodori e zucchine","Chickpea and potato stew with tomatoes and courgettes",{"ceci":175,"patate":220,"passata":125,"pomodori":90,"zucchine":130}],
+  ["Ceci e patate in umido con funghi e cavolo","Chickpea and potato stew with mushrooms and cabbage",{"ceci":175,"patate":220,"passata":125,"funghi":110,"cavolo":120}]
+  ] },
+ { s:"p",k:"legumi",v:1,t:"17 min",d:"olio, aceto, prezzemolo",p:["Prepara il couscous secondo la confezione, sgranalo e lascialo intiepidire. Lava e taglia le verdure a dadini o striscioline.","Mescola couscous e fagioli scolati con le verdure. Condisci con olio, aceto e prezzemolo. Servi subito o metti in frigorifero."],enD:"oil, vinegar, parsley",enP:["Prepare the couscous according to the packet, fluff it and let it cool slightly. Wash the vegetables and cut into dice or strips.","Toss the couscous and drained beans with the vegetables. Dress with oil, vinegar and parsley. Serve or refrigerate promptly."],
+  recipes:[
+  ["Couscous freddo ai fagioli con cetrioli e pomodori","Bean couscous salad with cucumber and tomatoes",{"couscous":80,"fagioli":175,"cetrioli":130,"pomodori":115}],
+  ["Couscous freddo ai fagioli con carote e peperoni","Bean couscous salad with carrots and peppers",{"couscous":80,"fagioli":175,"carote":95,"peperoni":115}],
+  ["Couscous freddo ai fagioli con cetrioli e insalata","Bean couscous salad with cucumber and lettuce",{"couscous":80,"fagioli":175,"cetrioli":145,"insalata":70}],
+  ["Couscous freddo ai fagioli con cavolo e carote","Bean couscous salad with cabbage and carrots",{"couscous":80,"fagioli":175,"cavolo":110,"carote":100}],
+  ["Couscous freddo ai fagioli con pomodori e peperoni","Bean couscous salad with tomatoes and peppers",{"couscous":80,"fagioli":175,"pomodori":115,"peperoni":115}],
+  ["Couscous freddo ai fagioli con insalata e cavolo","Bean couscous salad with lettuce and cabbage",{"couscous":80,"fagioli":175,"insalata":80,"cavolo":120}]
+  ] },
+ { s:"c",k:"uova",v:1,t:"26 min",d:"olio, cumino, paprika dolce",p:["Taglia le verdure a pezzetti e falle appassire in padella con olio, paprika e cumino. Aggiungi la passata e fai restringere.","Fai spazio nel sugo e sguscia le uova. Copri e cuoci finché tuorli e albumi sono sodi. Accompagna con il pane tostato."],enD:"oil, cumin, mild paprika",enP:["Soften the diced vegetables in a pan with oil, paprika and cumin. Add the passata and simmer until thickened.","Make wells in the sauce and crack in the eggs. Cover and cook until the yolks and whites are firm. Serve with toasted bread."],
+  recipes:[
+  ["Uova rapprese al pomodoro con peperoni e porri","Eggs set in tomato sauce with peppers and leeks",{"uova":135,"passata":165,"pane":85,"peperoni":115,"porri":75}],
+  ["Uova rapprese al pomodoro con funghi e cipolla","Eggs set in tomato sauce with mushrooms and onion",{"uova":135,"passata":165,"pane":85,"funghi":125,"cipolle":65}],
+  ["Uova rapprese al pomodoro con spinaci e cavolo","Eggs set in tomato sauce with spinach and cabbage",{"uova":135,"passata":165,"pane":85,"spinaci":95,"cavolo":115}],
+  ["Uova rapprese al pomodoro con broccoli e zucchine","Eggs set in tomato sauce with broccoli and courgettes",{"uova":135,"passata":165,"pane":85,"broccoli":110,"zucchine":110}],
+  ["Uova rapprese al pomodoro con zucca e cavolfiore","Eggs set in tomato sauce with squash and cauliflower",{"uova":135,"passata":165,"pane":85,"zucca":120,"cavolfiore":110}],
+  ["Uova rapprese al pomodoro con carote e cavoletti","Eggs set in tomato sauce with carrots and Brussels sprouts",{"uova":135,"passata":165,"pane":85,"carote":95,"cavoletti":120}]
+  ] },
+ { s:"p",k:"bianca",v:0,t:"28 min",d:"olio, limone, paprika dolce",p:["Cuoci il riso. Taglia le verdure e falle ammorbidire in una padella con poco olio.","Rosola in un’altra padella il pollo a bocconcini con paprika e cuoci fino a 74 °C al cuore. Unisci verdure e limone e servi con il riso."],enD:"oil, lemon, mild paprika",enP:["Cook the rice. Chop and soften the vegetables in a lightly oiled pan.","In another pan, brown diced chicken with paprika and cook to 74 °C at the centre. Add the vegetables and lemon and serve over rice."],
+  recipes:[
+  ["Bocconcini di pollo e riso con peperoni e porri","Chicken and rice skillet with peppers and leeks",{"pollo":145,"riso":77,"peperoni":120,"porri":85}],
+  ["Bocconcini di pollo e riso con zucca e broccoli","Chicken and rice skillet with squash and broccoli",{"pollo":145,"riso":77,"zucca":120,"broccoli":115}],
+  ["Bocconcini di pollo e riso con cavolo e carote","Chicken and rice skillet with cabbage and carrots",{"pollo":145,"riso":77,"cavolo":115,"carote":110}],
+  ["Bocconcini di pollo e riso con spinaci e funghi","Chicken and rice skillet with spinach and mushrooms",{"pollo":145,"riso":77,"spinaci":95,"funghi":125}],
+  ["Bocconcini di pollo e riso con cavolfiore e cipolla","Chicken and rice skillet with cauliflower and onion",{"pollo":145,"riso":77,"cavolfiore":140,"cipolle":60}],
+  ["Bocconcini di pollo e riso con zucchine e cavoletti","Chicken and rice skillet with courgettes and Brussels sprouts",{"pollo":145,"riso":77,"zucchine":120,"cavoletti":115}]
+  ] },
+ { s:"c",k:"bianca",v:0,t:"48 min",d:"olio, rosmarino, limone",p:["Scalda il forno a 205 °C. Taglia le patate e le verdure a bocconi, mescola con olio e rosmarino e disponi in teglia con le cosce di pollo.","Arrostisci finché le patate sono tenere e il pollo misura almeno 74 °C nella parte più spessa, lontano dall’osso. Completa con limone."],enD:"oil, rosemary, lemon",enP:["Heat the oven to 205 °C. Chop the potatoes and vegetables, toss with oil and rosemary and arrange in a tray with the chicken thighs.","Roast until the potatoes are tender and the thickest part of the chicken reaches at least 74 °C away from the bone. Finish with lemon."],
+  recipes:[
+  ["Cosce di pollo arrosto con patate, broccoli e carote","Roast chicken thighs with potatoes, broccoli and carrots",{"cosce":235,"patate":240,"broccoli":110,"carote":95}],
+  ["Cosce di pollo arrosto con patate, porri e zucca","Roast chicken thighs with potatoes, leeks and squash",{"cosce":235,"patate":240,"porri":90,"zucca":115}],
+  ["Cosce di pollo arrosto con patate, peperoni e cipolla","Roast chicken thighs with potatoes, peppers and onion",{"cosce":235,"patate":240,"peperoni":125,"cipolle":65}],
+  ["Cosce di pollo arrosto con patate, cavolo e cavolfiore","Roast chicken thighs with potatoes, cabbage and cauliflower",{"cosce":235,"patate":240,"cavolo":100,"cavolfiore":115}],
+  ["Cosce di pollo arrosto con patate, zucchine e porri","Roast chicken thighs with potatoes, courgettes and leeks",{"cosce":235,"patate":240,"zucchine":130,"porri":85}],
+  ["Cosce di pollo arrosto con patate, funghi e cavoletti","Roast chicken thighs with potatoes, mushrooms and Brussels sprouts",{"cosce":235,"patate":240,"funghi":105,"cavoletti":115}]
+  ] },
+ { s:"p",k:"bianca",v:0,t:"24 min",d:"olio, origano, limone",p:["Prepara il couscous. Affetta finemente le verdure e cuocile in padella con poco olio e origano finché sono tenere.","Cuoci il tacchino a striscioline su una piastra calda fino a 74 °C al cuore. Servi sopra il couscous con verdure e limone."],enD:"oil, oregano, lemon",enP:["Prepare the couscous. Thinly slice vegetables and pan-cook in a little oil with oregano until tender.","Griddle the turkey strips to 74 °C at the centre. Serve over couscous with vegetables and lemon."],
+  recipes:[
+  ["Couscous con tacchino alla piastra, pomodori e peperoni","Couscous with grilled turkey, tomatoes and peppers",{"tacchino":145,"couscous":77,"pomodori":115,"peperoni":110}],
+  ["Couscous con tacchino alla piastra, cavoletti e porri","Couscous with grilled turkey, Brussels sprouts and leeks",{"tacchino":145,"couscous":77,"cavoletti":125,"porri":90}],
+  ["Couscous con tacchino alla piastra, spinaci e cipolla","Couscous with grilled turkey, spinach and onion",{"tacchino":145,"couscous":77,"spinaci":120,"cipolle":75}],
+  ["Couscous con tacchino alla piastra, funghi e cavolo","Couscous with grilled turkey, mushrooms and cabbage",{"tacchino":145,"couscous":77,"funghi":115,"cavolo":115}],
+  ["Couscous con tacchino alla piastra, cavolfiore e carote","Couscous with grilled turkey, cauliflower and carrots",{"tacchino":145,"couscous":77,"cavolfiore":110,"carote":110}],
+  ["Couscous con tacchino alla piastra, broccoli e zucchine","Couscous with grilled turkey, broccoli and courgettes",{"tacchino":145,"couscous":77,"broccoli":115,"zucchine":120}]
+  ] },
+ { s:"c",k:"bianca",v:0,t:"32 min",d:"olio, alloro, origano",p:["Rosola i bocconcini di tacchino. Aggiungi patate e verdure a dadini, passata, alloro e poca acqua.","Cuoci coperto finché le patate sono tenere e il tacchino raggiunge 74 °C al cuore. Togli l’alloro e aggiungi l’origano."],enD:"oil, bay leaf, oregano",enP:["Brown the turkey pieces. Add diced potatoes and vegetables, passata, a bay leaf and a little water.","Simmer covered until the potatoes are tender and the turkey reaches 74 °C at the centre. Remove the bay leaf and finish with oregano."],
+  recipes:[
+  ["Tacchino in umido con patate, cavolo e carote","Turkey and potato stew with cabbage and carrots",{"tacchino":145,"patate":235,"passata":135,"cavolo":105,"carote":95}],
+  ["Tacchino in umido con patate, zucchine e cipolla","Turkey and potato stew with courgettes and onion",{"tacchino":145,"patate":235,"passata":135,"zucchine":145,"cipolle":60}],
+  ["Tacchino in umido con patate, broccoli e porri","Turkey and potato stew with broccoli and leeks",{"tacchino":145,"patate":235,"passata":135,"broccoli":130,"porri":80}],
+  ["Tacchino in umido con patate, funghi e peperoni","Turkey and potato stew with mushrooms and peppers",{"tacchino":145,"patate":235,"passata":135,"funghi":110,"peperoni":105}],
+  ["Tacchino in umido con patate, cavolfiore e zucca","Turkey and potato stew with cauliflower and squash",{"tacchino":145,"patate":235,"passata":135,"cavolfiore":115,"zucca":115}],
+  ["Tacchino in umido con patate, cavoletti e pomodori","Turkey and potato stew with Brussels sprouts and tomatoes",{"tacchino":145,"patate":235,"passata":135,"cavoletti":115,"pomodori":110}]
+  ] },
+ { s:"p",k:"pesce",v:0,t:"28 min",d:"olio, aneto, limone",p:["Cuoci il riso. Taglia le verdure a pezzi e cuocile al vapore finché sono tenere.","Controlla che il salmone non abbia lische. Cuocilo in padella con poco olio fino a 63 °C al cuore e servilo con riso, verdure, limone e aneto."],enD:"oil, dill, lemon",enP:["Cook the rice. Chop and steam the vegetables until tender.","Check the salmon for bones. Cook in a lightly oiled pan to 63 °C at the centre and serve with rice, vegetables, lemon and dill."],
+  recipes:[
+  ["Salmone in padella con riso, broccoli e carote","Pan-cooked salmon with rice, broccoli and carrots",{"salmone":155,"riso":75,"broccoli":125,"carote":100}],
+  ["Salmone in padella con riso, zucchine e porri","Pan-cooked salmon with rice, courgettes and leeks",{"salmone":155,"riso":75,"zucchine":135,"porri":85}],
+  ["Salmone in padella con riso, cavolfiore e zucca","Pan-cooked salmon with rice, cauliflower and squash",{"salmone":155,"riso":75,"cavolfiore":120,"zucca":125}],
+  ["Salmone in padella con riso, spinaci e funghi","Pan-cooked salmon with rice, spinach and mushrooms",{"salmone":155,"riso":75,"spinaci":90,"funghi":120}],
+  ["Salmone in padella con riso, peperoni e cipolla","Pan-cooked salmon with rice, peppers and onion",{"salmone":155,"riso":75,"peperoni":135,"cipolle":70}],
+  ["Salmone in padella con riso, cavolo e cavoletti","Pan-cooked salmon with rice, cabbage and Brussels sprouts",{"salmone":155,"riso":75,"cavolo":110,"cavoletti":120}]
+  ] },
+ { s:"c",k:"pesce",v:0,t:"36 min",d:"olio, limone, origano",p:["Scalda il forno a 200 °C. Affetta patate e verdure, condisci con olio e origano e arrostisci finché sono quasi tenere.","Controlla che il merluzzo non abbia lische e aggiungilo alla teglia con il limone. Cuoci finché il centro del pesce raggiunge 63 °C."],enD:"oil, lemon, oregano",enP:["Heat the oven to 200 °C. Slice potatoes and vegetables, toss with oil and oregano and roast until nearly tender.","Check the pollock for bones, then add to the tray with lemon. Bake until the centre of the fish reaches 63 °C."],
+  recipes:[
+  ["Merluzzo in teglia con patate, cavoletti e carote","Baked pollock with potatoes, Brussels sprouts and carrots",{"merluzzo":165,"patate":250,"cavoletti":110,"carote":120}],
+  ["Merluzzo in teglia con patate, zucca e spinaci","Baked pollock with potatoes, squash and spinach",{"merluzzo":165,"patate":250,"zucca":145,"spinaci":80}],
+  ["Merluzzo in teglia con patate, peperoni e cipolla","Baked pollock with potatoes, peppers and onion",{"merluzzo":165,"patate":250,"peperoni":140,"cipolle":70}],
+  ["Merluzzo in teglia con patate, broccoli e cavolo","Baked pollock with potatoes, broccoli and cabbage",{"merluzzo":165,"patate":250,"broccoli":120,"cavolo":110}],
+  ["Merluzzo in teglia con patate, cavolfiore e funghi","Baked pollock with potatoes, cauliflower and mushrooms",{"merluzzo":165,"patate":250,"cavolfiore":130,"funghi":100}],
+  ["Merluzzo in teglia con patate, zucchine e peperoni","Baked pollock with potatoes, courgettes and peppers",{"merluzzo":165,"patate":250,"zucchine":130,"peperoni":110}]
+  ] },
+ { s:"p",k:"pesce",v:0,t:"24 min",d:"olio, aglio, prezzemolo",p:["Rosola le verdure a dadini con poco olio e aglio. Unisci la passata e lascia sobbollire.","Controlla il merluzzo per le lische e cuoci i pezzi nel sugo fino a 63 °C al cuore. Cuoci la pasta, condiscila con il sugo e aggiungi il prezzemolo."],enD:"oil, garlic, parsley",enP:["Sauté the diced vegetables in oil with a little garlic. Add passata and bring to a simmer.","Check the pollock for bones and simmer the pieces in the sauce to 63 °C at the centre. Cook the pasta, toss with the sauce and add parsley."],
+  recipes:[
+  ["Pasta al merluzzo e pomodoro con zucchine e porri","Pollock and tomato pasta with courgettes and leeks",{"merluzzo":155,"pasta":80,"passata":135,"zucchine":125,"porri":85}],
+  ["Pasta al merluzzo e pomodoro con spinaci e peperoni","Pollock and tomato pasta with spinach and peppers",{"merluzzo":155,"pasta":80,"passata":135,"spinaci":90,"peperoni":125}],
+  ["Pasta al merluzzo e pomodoro con broccoli e pomodori","Pollock and tomato pasta with broccoli and tomatoes",{"merluzzo":155,"pasta":80,"passata":135,"broccoli":125,"pomodori":115}],
+  ["Pasta al merluzzo e pomodoro con cavolfiore e carote","Pollock and tomato pasta with cauliflower and carrots",{"merluzzo":155,"pasta":80,"passata":135,"cavolfiore":130,"carote":100}],
+  ["Pasta al merluzzo e pomodoro con funghi e cipolla","Pollock and tomato pasta with mushrooms and onion",{"merluzzo":155,"pasta":80,"passata":135,"funghi":140,"cipolle":70}],
+  ["Pasta al merluzzo e pomodoro con cavolo e zucca","Pollock and tomato pasta with cabbage and squash",{"merluzzo":155,"pasta":80,"passata":135,"cavolo":100,"zucca":130}]
+  ] },
+ { s:"c",k:"rossa",v:0,t:"35 min",d:"olio, alloro, pepe",p:["Rosola le verdure tritate. Unisci il macinato e sgranalo con il cucchiaio; aggiungi passata e alloro e cuoci finché la carne raggiunge 71 °C.","Cuoci la pasta, togli l’alloro dal ragù e mescola con pepe a piacere."],enD:"oil, bay leaf, pepper",enP:["Brown the finely diced vegetables. Add the mince and break it up with a spoon. Add passata and bay leaf and cook until the meat reaches 71 °C.","Cook the pasta, remove the bay leaf from the ragù and toss together with pepper if you like."],
+  recipes:[
+  ["Pasta al ragù di macinato con cavolo e cipolla","Minced meat ragù with pasta and cabbage and onion",{"manzo":130,"pasta":85,"passata":150,"cavolo":125,"cipolle":70}],
+  ["Pasta al ragù di macinato con funghi e porri","Minced meat ragù with pasta and mushrooms and leeks",{"manzo":130,"pasta":85,"passata":150,"funghi":130,"porri":90}],
+  ["Pasta al ragù di macinato con zucca e carote","Minced meat ragù with pasta and squash and carrots",{"manzo":130,"pasta":85,"passata":150,"zucca":130,"carote":95}],
+  ["Pasta al ragù di macinato con peperoni e spinaci","Minced meat ragù with pasta and peppers and spinach",{"manzo":130,"pasta":85,"passata":150,"peperoni":125,"spinaci":95}],
+  ["Pasta al ragù di macinato con zucchine e broccoli","Minced meat ragù with pasta and courgettes and broccoli",{"manzo":130,"pasta":85,"passata":150,"zucchine":125,"broccoli":110}],
+  ["Pasta al ragù di macinato con cavolfiore e pomodori","Minced meat ragù with pasta and cauliflower and tomatoes",{"manzo":130,"pasta":85,"passata":150,"cavolfiore":125,"pomodori":115}]
+  ] },
+ { s:"p",k:"rossa",v:0,t:"30 min",d:"olio, limone, rosmarino",p:["Prepara il couscous. Taglia le verdure fini e cuocile in padella con olio e rosmarino.","Rosola e cuoci la lonza fino a 63 °C al cuore. Lasciala riposare 3 minuti, poi tagliala e servila con couscous, verdure e limone."],enD:"oil, lemon, rosemary",enP:["Prepare the couscous. Thinly slice the vegetables and pan-cook with oil and rosemary.","Pan-cook the pork loin to 63 °C at the centre. Rest for 3 minutes, then slice and serve with the couscous, vegetables and lemon."],
+  recipes:[
+  ["Couscous con lonza, cavolo e cipolla","Pork loin couscous with cabbage and onion",{"maiale":150,"couscous":79,"cavolo":135,"cipolle":75}],
+  ["Couscous con lonza, zucca e porri","Pork loin couscous with squash and leeks",{"maiale":150,"couscous":79,"zucca":130,"porri":90}],
+  ["Couscous con lonza, broccoli e peperoni","Pork loin couscous with broccoli and peppers",{"maiale":150,"couscous":79,"broccoli":110,"peperoni":125}],
+  ["Couscous con lonza, carote e cavoletti","Pork loin couscous with carrots and Brussels sprouts",{"maiale":150,"couscous":79,"carote":100,"cavoletti":120}],
+  ["Couscous con lonza, cavolfiore e zucchine","Pork loin couscous with cauliflower and courgettes",{"maiale":150,"couscous":79,"cavolfiore":125,"zucchine":120}],
+  ["Couscous con lonza, funghi e spinaci","Pork loin couscous with mushrooms and spinach",{"maiale":150,"couscous":79,"funghi":130,"spinaci":90}]
+  ] }
+].flatMap(({recipes,enD,enP,...recipe})=>
+ recipes.map(([n,title,g])=>[{...recipe,n,g},[title,enD,enP]]));
 const RC=[
 {n:"Porridge di avena e mela",s:"b",k:"col",v:1,g:{avena:60,latte:250,mele:120},t:"10 min",d:"cannella, miele (facoltativi)",p:["Versa avena e latte in un pentolino.","Cuoci a fuoco basso 5 minuti, mescolando, finché si addensa.","Taglia la mela a dadini e aggiungila sopra, con cannella e miele se vuoi."]},
 {n:"Porridge con pera",s:"b",k:"col",v:1,g:{avena:60,latte:250,pere:120},t:"10 min",d:"cannella (facoltativa)",p:["Cuoci avena e latte in un pentolino a fuoco basso per 5 minuti, mescolando.","Taglia la pera a dadini.","Servi il porridge con la pera sopra e un pizzico di cannella."]},
@@ -958,7 +1463,98 @@ const RC=[
 {n:"Yogurt e arancia",s:"s",k:"",v:1,g:{yogurt:150,arance:150},t:"3 min",d:"",p:["Sbuccia l’arancia, tagliala a pezzetti e mescolala allo yogurt."]},
 {n:"Pane e formaggio",s:"s",k:"",v:1,g:{pane:50,formaggio:20},t:"2 min",d:"",p:["Una fetta di pane con una fetta di formaggio."]},
 {n:"Mandarini e frutta secca",s:"s",k:"",v:1,g:{mandarini:150,noci:20},t:"2 min",d:"",p:["Sbuccia due mandarini e accompagnali con una manciata di frutta secca."]},
-{n:"Pane e ricotta con mandarini",s:"b",k:"col",v:1,g:{pane:90,ricotta:60,mandarini:150},t:"5 min",d:"miele o marmellata (facoltativi)",p:["Taglia il pane a fette e tostalo se ti piace.","Spalma la ricotta e aggiungi un filo di miele o marmellata.","Servi con i mandarini sbucciati."]}
+{n:"Pane e ricotta con mandarini",s:"b",k:"col",v:1,g:{pane:90,ricotta:60,mandarini:150},t:"5 min",d:"miele o marmellata (facoltativi)",p:["Taglia il pane a fette e tostalo se ti piace.","Spalma la ricotta e aggiungi un filo di miele o marmellata.","Servi con i mandarini sbucciati."]},
+
+// T37: nuove ricette per tutti i pasti.
+{n:"Porridge di riso con banana e cannella",s:"b",k:"col",v:1,g:{riso:65,banane:130},t:"22 min",d:"cannella",p:["Cuoci il riso in acqua secondo la confezione, lasciandolo morbido e cremoso.","Schiaccia la banana e incorporala al riso caldo con la cannella."]},
+{n:"Avena al forno con pera",s:"b",k:"col",v:1,g:{avena:65,pere:160,banane:85},t:"22 min",d:"cannella",p:["Schiaccia la banana, mescola con avena, un goccio d’acqua e cannella.","Aggiungi la pera a dadini e cuoci in una teglia piccola a 190 °C finché si rassoda."]},
+{n:"Crema di ceci e pomodoro su pane",s:"b",k:"col",v:1,g:{pane:85,ceci:130,pomodori:90},t:"7 min",d:"olio, limone",p:["Scola e schiaccia i ceci con limone e poco olio.","Tosta il pane, spalma i ceci e aggiungi il pomodoro a fettine."]},
+{n:"Patate e uova con spinaci in padella",s:"b",k:"uova",v:1,g:{patate:250,uova:120,spinaci:80},t:"16 min",d:"olio, pepe",p:["Taglia le patate a cubetti e lessale finché sono quasi tenere.","Rosolale in poco olio, aggiungi gli spinaci e versa le uova sbattute. Cuoci finché sono rapprese."]},
+{n:"Tofu strapazzato con pomodoro",s:"b",k:"col",v:1,g:{tofu:160,pomodori:110,pane:75},t:"15 min",d:"olio, curcuma",p:["Sbriciola il tofu in padella e fallo insaporire con poco olio e curcuma.","Aggiungi il pomodoro a dadini e cuoci brevemente. Servi con pane tostato."]},
+{n:"Ciotola di yogurt con mela e mandarino",s:"b",k:"col",v:1,g:{yogurt:200,mele:100,mandarini:100,avena:35},t:"7 min",d:"cannella",p:["Taglia la mela finemente e dividi il mandarino a spicchi.","Completa lo yogurt con avena, frutta e cannella."]},
+{n:"Crostoni con fagioli e porro",s:"b",k:"col",v:1,g:{pane:85,fagioli:140,porri:70},t:"12 min",d:"olio, rosmarino",p:["Affetta il porro sottile e cuocilo in padella finché è tenero.","Aggiungi i fagioli scolati, schiacciali con rosmarino e poco olio e spalma sul pane tostato."]},
+{n:"Frittelle di banana e avena senza uova",s:"b",k:"col",v:1,g:{avena:65,banane:140},t:"16 min",d:"acqua, olio, cannella",p:["Trita finemente l’avena e mescolala alla banana schiacciata, aggiungendo acqua fino a una pastella densa.","Cuoci piccole frittelle in padella leggermente unta, girandole quando i bordi tengono."]},
+{n:"Banana al cacao",s:"s",k:"",v:1,g:{banane:120},t:"5 min",d:"cacao amaro, cannella",p:["Schiaccia la banana e spolverizza con poco cacao e cannella."]},
+{n:"Mela calda alla cannella",s:"s",k:"",v:1,g:{mele:180},t:"7 min",d:"acqua, cannella",p:["Taglia la mela a pezzetti e cuocila coperta con un goccio d’acqua finché è tenera. Aggiungi la cannella."]},
+{n:"Arancia e pera al limone",s:"s",k:"",v:1,g:{arance:100,pere:100},t:"5 min",d:"limone",p:["Sbuccia l’arancia, taglia la pera e mescola con qualche goccia di limone."]},
+{n:"Pane con crema di fagioli al limone",s:"s",k:"",v:1,g:{pane:45,fagioli:75},t:"8 min",d:"limone, olio",p:["Schiaccia i fagioli scolati con limone e poco olio, poi spalmali su una fetta di pane."]},
+{n:"Bocconcini di tofu alla paprika",s:"s",k:"",v:1,g:{tofu:90},t:"10 min",d:"paprika dolce, olio",p:["Asciuga il tofu, taglialo a cubetti e rosolalo in poco olio. Condisci con paprika dolce."]},
+{n:"Ricotta con pera e cannella",s:"s",k:"",v:1,g:{ricotta:70,pere:120},t:"5 min",d:"cannella",p:["Affetta la pera, servi con la ricotta e completa con cannella."]},
+{n:"Carote morbide con crema di ceci",s:"s",k:"",v:1,g:{carote:100,ceci:65},t:"10 min",d:"limone, olio",p:["Cuoci le carote a vapore fino a renderle tenere.","Frulla i ceci scolati con limone, olio e poca acqua e servi con le carote."]},
+{n:"Yogurt con mela grattugiata e avena",s:"s",k:"",v:1,g:{yogurt:120,mele:100,avena:25},t:"7 min",d:"cannella",p:["Grattugia la mela e mescolala con yogurt, avena e cannella."]},
+{n:"Lenticchie con cavolfiore arrosto",s:"p",k:"legumi",v:1,g:{lenticchie:85,cavolfiore:220,carote:100,insalata:45},t:"35 min",d:"olio, limone, cumino",p:["Arrostisci cavolfiore e carote a 210 °C con olio e cumino finché sono teneri.","Cuoci le lenticchie secondo la confezione e scolale. Unisci alle verdure e condisci con limone."]},
+{n:"Patata al forno ripiena di fagioli e pomodoro",s:"c",k:"legumi",v:1,g:{patate:350,fagioli:180,passata:110,cipolle:45},t:"30 min",d:"olio, paprika, origano",p:["Taglia la patata a metà e cuocila a 210 °C con il taglio verso il basso finché è tenera.","Cuoci cipolla, passata e fagioli scolati con paprika. Apri la patata e farciscila."]},
+{n:"Fagioli, patate e cavolo tiepidi",s:"p",k:"legumi",v:1,g:{fagioli:200,patate:260,cavolo:150},t:"25 min",d:"olio, aceto, cumino",p:["Lessa le patate a cubetti e stufa il cavolo affettato con poco olio e acqua.","Aggiungi fagioli scolati, patate e cumino. Servi tiepido con poco aceto."]},
+{n:"Cavolfiore al curry con fagioli bianchi",s:"c",k:"legumi",v:1,g:{cavolfiore:220,fagioli:190,riso:75,cipolle:55,passata:120},t:"32 min",d:"olio, curry in polvere",p:["Rosola la cipolla con il curry. Unisci cavolfiore, passata e poca acqua e cuoci coperto finché è tenero.","Aggiungi i fagioli scolati e servi con il riso cotto a parte."]},
+{n:"Riso al limone con ceci e broccoli",s:"p",k:"legumi",v:1,g:{riso:85,ceci:155,broccoli:180},t:"20 min",d:"olio, limone, prezzemolo",p:["Cuoci il riso e lessa o cuoci a vapore i broccoli.","Scalda i ceci scolati in poco olio, unisci riso e broccoli e condisci con limone e prezzemolo."]},
+{n:"Peperoni ripieni di riso e ceci",s:"c",k:"legumi",v:1,g:{peperoni:255,ceci:160,riso:75,passata:95},t:"32 min",d:"olio, origano, paprika",p:["Lessa il riso. Taglia a metà i peperoni e ammorbidiscili in forno a 200 °C.","Mescola riso, ceci scolati, passata e spezie. Farcisci e rimetti in forno finché il ripieno è caldo."]},
+{n:"Tofu croccante con patate e cavolo",s:"p",k:"legumi",v:1,g:{tofu:170,patate:270,cavolo:130},t:"25 min",d:"olio, paprika, aceto",p:["Lessa le patate a cubetti. Asciuga e rosola il tofu con paprika.","Salta o stufa il cavolo affettato e riunisci tutto in padella. Completa con poco aceto."]},
+{n:"Tofu al pomodoro con polpette di riso",s:"c",k:"legumi",v:1,g:{tofu:170,passata:170,riso:90,spinaci:100},t:"28 min",d:"olio, aglio, origano",p:["Cuoci il riso finché è tenero, schiacciane una parte e forma dischetti da dorare in padella.","Cuoci la passata con tofu a cubetti, aglio e origano. Aggiungi gli spinaci e servi con i dischetti."]},
+{n:"Gnocchi con crema di fagioli e porri",s:"p",k:"legumi",v:1,g:{gnocchi:220,fagioli:155,porri:125},t:"25 min",d:"olio, pepe",p:["Stufa i porri affettati in poco olio e acqua. Frullane una parte con i fagioli scolati.","Cuoci gli gnocchi secondo la confezione e mescolali alla crema con poca acqua di cottura."]},
+{n:"Lenticchie e patate al forno con cavolo",s:"c",k:"legumi",v:1,g:{lenticchie:80,patate:285,cavolo:150,passata:110},t:"42 min",d:"olio, alloro, paprika",p:["Cuoci le lenticchie con alloro finché sono tenere e lessa le patate a fette.","Stufa il cavolo e uniscilo a lenticchie e passata. Copri con le patate e cuoci a 205 °C finché la superficie è dorata."]},
+{n:"Couscous con fagioli e carote al cumino",s:"p",k:"legumi",v:1,g:{couscous:80,fagioli:175,carote:170,spinaci:70},t:"23 min",d:"olio, cumino, limone",p:["Sgrana il couscous dopo averlo idratato secondo la confezione.","Salta le carote con cumino, poi unisci spinaci e fagioli scolati. Mescola al couscous con limone."]},
+{n:"Pasta al cavolfiore con briciole croccanti",s:"c",k:"cereali",v:1,g:{pasta:105,cavolfiore:235,pane:35,cipolle:40},t:"32 min",d:"olio, aglio, peperoncino facoltativo",p:["Cuoci il cavolfiore finché è morbido e schiaccialo con cipolla stufata e acqua della pasta.","Tosta il pane sbriciolato in padella con poco olio e usalo per completare la pasta con la crema."]},
+{n:"Riso con uova sode, porri e carote",s:"p",k:"uova",v:1,g:{riso:85,uova:120,porri:100,carote:120},t:"24 min",d:"olio, limone",p:["Cuoci il riso e lessa le uova finché il tuorlo è sodo.","Stufa porri e carote, aggiungili al riso e completa con le uova sgusciate e poco limone."]},
+{n:"Sformato di uova, broccoli e patate",s:"c",k:"uova",v:1,g:{uova:145,broccoli:170,patate:270},t:"37 min",d:"olio, pepe",p:["Lessa patate a fette e broccoli fino a renderli quasi teneri.","Trasferisci in teglia, versa sopra le uova sbattute e cuoci a 190 °C finché il centro è completamente rappreso."]},
+{n:"Gnocchi con porri e ricotta",s:"p",k:"formaggi",v:1,g:{gnocchi:230,porri:150,ricotta:95},t:"25 min",d:"olio, pepe",p:["Stufa i porri in poca acqua e olio, poi unisci la ricotta.","Cuoci gli gnocchi secondo la confezione e amalgamali con la crema."]},
+{n:"Patate, cavolo e mozzarella al forno",s:"c",k:"formaggi",v:1,g:{patate:290,cavolo:150,mozzarella:100},t:"38 min",d:"olio, origano, pepe",p:["Lessa le patate a fettine e stufa il cavolo. Componi gli strati in teglia con mozzarella scolata e origano.","Cuoci a 200 °C finché è ben caldo e la superficie è dorata."]},
+{n:"Pollo al limone con couscous e porri",s:"p",k:"bianca",v:0,g:{pollo:145,couscous:85,porri:130,carote:95},t:"24 min",d:"olio, limone, timo",p:["Idrata il couscous. Stufa porri e carote in padella.","Cuoci il pollo a strisce finché è cotto al cuore, profuma con limone e timo e unisci al couscous con le verdure."]},
+{n:"Tacchino al forno con zucca e cavolo",s:"c",k:"bianca",v:0,g:{tacchino:155,zucca:240,cavolo:150,patate:195},t:"38 min",d:"olio, rosmarino",p:["Arrostisci patate e zucca a pezzi con rosmarino a 205 °C.","Aggiungi il tacchino e il cavolo a falde nella seconda parte della cottura. Servi solo quando il tacchino è cotto al cuore."]},
+{n:"Pollo e cavolo in padella con riso",s:"p",k:"bianca",v:0,g:{pollo:150,cavolo:160,riso:85,cipolle:45},t:"26 min",d:"olio, paprika dolce",p:["Cuoci il riso a parte. Rosola pollo a striscioline e cipolla con paprika, poi aggiungi il cavolo.","Prosegui la cottura finché il pollo è cotto al cuore e il cavolo è tenero. Servi con il riso."]},
+{n:"Polpette di tacchino e patate al sugo",s:"c",k:"bianca",v:0,g:{tacchino:155,patate:255,passata:180,carote:100},t:"32 min",d:"olio, prezzemolo",p:["Lessa una parte delle patate e schiacciala. Trita il tacchino e forma polpette con patata e prezzemolo.","Rosolale, aggiungi passata e carote a cubetti e cuoci finché sono cotte al cuore. Servi con le patate rimaste lessate."]},
+{n:"Merluzzo con couscous e porri",s:"p",k:"pesce",v:0,g:{merluzzo:155,couscous:85,porri:140,carote:100},t:"27 min",d:"olio, limone, aneto",p:["Idrata il couscous e stufa porri e carote. Controlla che il pesce non abbia lische.","Cuoci il filetto in padella con limone finché è opaco e si sfalda. Servi con le verdure e il couscous."]},
+{n:"Merluzzo al cartoccio con zucca e patate",s:"c",k:"pesce",v:0,g:{merluzzo:165,zucca:210,patate:280},t:"34 min",d:"olio, limone, prezzemolo",p:["Precuoci zucca e patate a fette. Elimina eventuali lische dal pesce.","Chiudi pesce, verdure e limone in carta da forno e cuoci a 200 °C finché il filetto è opaco."]},
+{n:"Insalata tiepida di salmone, fagioli e patate",s:"p",k:"pesce",v:0,g:{salmone:135,fagioli:115,patate:230,insalata:55},t:"26 min",d:"olio, limone, prezzemolo",p:["Lessa le patate e controlla che il filetto non abbia lische.","Cuoci il salmone finché è opaco, dividilo a scaglie e mescolalo a patate, fagioli scolati e insalata. Condisci con limone."]},
+{n:"Salmone in padella con cavolo e carote",s:"c",k:"pesce",v:0,g:{salmone:145,cavolo:155,carote:120,riso:80},t:"27 min",d:"olio, limone, aneto",p:["Cuoci il riso e stufa cavolo e carote affettati. Controlla il filetto per eventuali lische.","Cuoci il salmone in padella finché è opaco, poi servi con riso e verdure al limone."]},
+{n:"Risotto al cavolo e carote",s:"p",k:"cereali",v:1,g:{riso:105,cavolo:155,carote:125,cipolle:35},t:"25 min",d:"olio, acqua, pepe",p:["Stufa cipolla, carota e cavolo sottili. Unisci il riso e tostalo per un minuto.","Aggiungi acqua calda gradualmente, mescolando finché il riso è cremoso e tenero."]},
+{n:"Stufato di ceci e cavolo con patate",s:"c",k:"legumi",v:1,g:{ceci:185,cavolo:160,patate:255,carote:85},t:"30 min",d:"olio, alloro, paprika",p:["Fai ammorbidire cavolo e carote con olio e paprika. Unisci patate a cubetti e acqua.","Cuoci con l’alloro finché le patate sono tenere, poi aggiungi i ceci scolati e scalda bene."]},
+{n:"Lonza al limone con carote e riso",s:"c",k:"rossa",v:0,g:{maiale:150,carote:170,riso:85},t:"32 min",d:"olio, limone, timo",p:["Cuoci il riso e ammorbidisci le carote in padella con poca acqua.","Rosola e cuoci la lonza, condisci con limone e timo e servi con carote e riso."]},
+
+// T37: secondo gruppo di ricette.
+{n:"Gallette morbide d’avena e carota",s:"b",k:"col",v:1,g:{avena:65,carote:90,banane:100},t:"18 min",d:"olio, cannella",p:["Grattugia finemente la carota e mescolala con banana schiacciata, avena e cannella.","Forma dischetti piccoli e cuocili su entrambi i lati in padella con poco olio."]},
+{n:"Pane caldo con zucchine e crema di ceci",s:"b",k:"col",v:1,g:{pane:85,zucchine:120,ceci:140},t:"10 min",d:"olio, limone, menta",p:["Salta le zucchine a pezzetti finché sono morbide.","Schiaccia i ceci scolati con limone e menta. Spalma sul pane tostato e aggiungi le zucchine."]},
+{n:"Riso cremoso con pera e cacao",s:"b",k:"col",v:1,g:{riso:65,pere:160,banane:75},t:"25 min",d:"cacao amaro, acqua",p:["Cuoci il riso con acqua finché è morbido. Aggiungi la pera a dadini negli ultimi minuti.","Schiaccia la banana, uniscila al riso e completa con cacao."]},
+{n:"Uova sode con patate e pomodoro",s:"b",k:"uova",v:1,g:{uova:120,patate:225,pomodori:100},t:"18 min",d:"olio, origano",p:["Lessa le patate a cubetti e cuoci le uova finché il tuorlo è sodo.","Servi con i pomodori a spicchi, olio e origano."]},
+{n:"Yogurt con pera e avena tostata",s:"b",k:"col",v:1,g:{yogurt:200,pere:140,avena:55},t:"10 min",d:"cannella",p:["Tosta l’avena in una padella asciutta per pochi minuti, mescolando.","Versa lo yogurt nella ciotola e aggiungi la pera, l’avena e la cannella."]},
+{n:"Patate al mattino con crema di tofu e porro",s:"b",k:"col",v:1,g:{patate:250,tofu:140,porri:80},t:"16 min",d:"olio, pepe, acqua",p:["Lessa le patate a pezzetti. Stufa il porro affettato in poca acqua e olio.","Schiaccia il tofu con i porri teneri, scalda la crema e servila con le patate."]},
+{n:"Pane e ricotta con mela al limone",s:"b",k:"col",v:1,g:{pane:90,ricotta:75,mele:115},t:"8 min",d:"limone, cannella",p:["Tosta il pane e spalmalo di ricotta.","Affetta finemente la mela, spruzzala di limone e aggiungila al pane con cannella."]},
+{n:"Avena al cucchiaio con banana e mandarino",s:"b",k:"col",v:1,g:{avena:68,banane:105,mandarini:100},t:"12 min",d:"acqua, cannella",p:["Cuoci l’avena in acqua mescolando finché diventa cremosa.","Unisci la banana schiacciata e completa con mandarino e cannella."]},
+{n:"Pera allo yogurt e cacao",s:"s",k:"",v:1,g:{pere:120,yogurt:130},t:"5 min",d:"cacao amaro",p:["Mescola poco cacao allo yogurt. Taglia la pera a cubetti e servila nello yogurt."]},
+{n:"Mandarino e mela al cucchiaio",s:"s",k:"",v:1,g:{mandarini:100,mele:110},t:"6 min",d:"limone",p:["Dividi il mandarino e grattugia la mela. Mescola la frutta con poco limone."]},
+{n:"Patate morbide con crema di ceci",s:"s",k:"",v:1,g:{patate:130,ceci:70},t:"12 min",d:"limone, olio, paprika",p:["Lessa le patate in pezzi piccoli finché sono tenere.","Schiaccia i ceci scolati con limone, poca acqua e olio, poi servi con patate e paprika."]},
+{n:"Crostino con tofu e carota",s:"s",k:"",v:1,g:{pane:50,tofu:75,carote:35},t:"9 min",d:"olio, limone",p:["Schiaccia il tofu con poco olio e limone.","Grattugia finemente la carota e mescolala al tofu prima di spalmare sul pane tostato."]},
+{n:"Pera cotta alla vaniglia",s:"s",k:"",v:1,g:{pere:180},t:"12 min",d:"vaniglia, acqua",p:["Taglia la pera a spicchi e cuocila coperta in poca acqua con vaniglia finché è tenera."]},
+{n:"Crema di banana e yogurt",s:"s",k:"",v:1,g:{banane:100,yogurt:130},t:"6 min",d:"scorza di limone",p:["Schiaccia la banana e sbattila con lo yogurt. Aggiungi poca scorza di limone lavata."]},
+{n:"Morbido di avena e mela in padella",s:"s",k:"",v:1,g:{avena:35,mele:100,banane:55},t:"15 min",d:"olio, cannella",p:["Grattugia la mela e schiaccia la banana. Mescola con avena e cannella.","Cuoci in piccoli dischetti sottili su entrambi i lati in una padella appena unta."]},
+{n:"Fagioli tiepidi alla paprika",s:"s",k:"",v:1,g:{fagioli:130},t:"10 min",d:"olio, paprika dolce, limone",p:["Sciacqua i fagioli, scaldali in padella con paprika e poco olio e condiscili con limone."]},
+{n:"Minestra di ceci, porri e riso",s:"p",k:"legumi",v:1,g:{ceci:165,porri:160,riso:75,carote:100},t:"32 min",d:"olio, alloro, acqua",p:["Stufa porro e carota affettati, poi unisci riso, acqua e alloro.","Cuoci finché il riso è tenero. Aggiungi i ceci scolati e scalda prima di servire."]},
+{n:"Sformato di lenticchie con purè di cavolfiore",s:"c",k:"legumi",v:1,g:{lenticchie:85,cavolfiore:250,patate:190,passata:120,carote:90},t:"42 min",d:"olio, timo",p:["Cuoci le lenticchie con carote e timo. Aggiungi la passata e fai restringere.","Lessa patate e cavolfiore, schiacciali e stendili sulle lenticchie. Cuoci in forno caldo fino a doratura."]},
+{n:"Riso con fagioli bianchi e peperoni arrostiti",s:"p",k:"legumi",v:1,g:{riso:80,fagioli:175,peperoni:180,pomodori:90},t:"23 min",d:"olio, aceto, origano",p:["Arrostisci i peperoni a falde mentre cuoci il riso.","Mescola riso, fagioli scolati, peperoni e pomodoro a dadini. Condisci con olio, aceto e origano."]},
+{n:"Zucchine ripiene di lenticchie e riso",s:"c",k:"legumi",v:1,g:{zucchine:275,lenticchie:65,riso:65,passata:120},t:"34 min",d:"olio, timo, aglio",p:["Cuoci le lenticchie e il riso. Scava a metà le zucchine e trita la polpa.","Cuoci la polpa con passata e timo, mescola al ripieno, farcisci e inforna a 200 °C finché le zucchine sono tenere."]},
+{n:"Pasta con crema di ceci e porri",s:"p",k:"legumi",v:1,g:{pasta:95,ceci:140,porri:145},t:"28 min",d:"olio, limone, pepe",p:["Stufa i porri finché sono morbidi. Frulla metà con ceci scolati e poca acqua di cottura.","Mescola con la pasta cotta, i porri rimasti e poco limone."]},
+{n:"Zuppa di lenticchie, broccoli e patate",s:"c",k:"legumi",v:1,g:{lenticchie:85,broccoli:170,patate:235,cipolle:60},t:"36 min",d:"olio, alloro",p:["Stufa la cipolla. Aggiungi lenticchie, patate a cubetti, acqua e alloro.","Aggiungi i broccoli verso fine cottura. Servi quando lenticchie e verdure sono tenere."]},
+{n:"Riso tiepido con tofu, cetriolo e carota",s:"p",k:"legumi",v:1,g:{riso:80,tofu:155,cetrioli:110,carote:100},t:"20 min",d:"olio, aceto, zenzero",p:["Cuoci il riso. Rosola il tofu a cubetti con zenzero e carote affettate sottili.","Unisci a riso e cetriolo a pezzetti. Condisci con poco aceto."]},
+{n:"Tofu ai funghi con crema di patate",s:"c",k:"legumi",v:1,g:{tofu:170,funghi:175,patate:320,porri:75},t:"28 min",d:"olio, prezzemolo",p:["Lessa le patate e schiacciale con acqua di cottura e olio.","Salta funghi, porri e tofu tagliato a pezzetti finché sono ben caldi. Servi con il purè."]},
+{n:"Riso con zucchine e carote al limone",s:"p",k:"cereali",v:1,g:{riso:110,zucchine:180,carote:140,porri:70},t:"24 min",d:"olio, limone, menta",p:["Cuoci il riso. Stufa carote e porro prima di aggiungere le zucchine a cubetti.","Mescola al riso e aggiungi limone e menta."]},
+{n:"Gnocchi con crema di zucca e porri",s:"c",k:"cereali",v:1,g:{gnocchi:250,zucca:250,porri:110},t:"35 min",d:"olio, salvia, pepe",p:["Cuoci zucca e porri con poca acqua e salvia finché sono morbidi, poi schiacciali.","Cuoci gli gnocchi secondo la confezione e saltali nella crema."]},
+{n:"Uova sode con couscous e spinaci",s:"p",k:"uova",v:1,g:{uova:120,couscous:90,spinaci:150,pomodori:100},t:"19 min",d:"olio, limone",p:["Lessa le uova fino a rendere sodo il tuorlo. Idrata il couscous.","Salta gli spinaci e mescolali al couscous con i pomodori. Completa con uova e limone."]},
+{n:"Frittata al forno con cavolo e porri",s:"c",k:"uova",v:1,g:{uova:150,cavolo:170,porri:90,patate:205},t:"32 min",d:"olio, pepe",p:["Lessa le patate a cubetti e stufa cavolo e porri.","Trasferisci in teglia, copri con le uova sbattute e cuoci a 190 °C finché il centro è rappreso."]},
+{n:"Riso con ricotta, carote e porri",s:"p",k:"formaggi",v:1,g:{riso:90,ricotta:95,carote:125,porri:110},t:"23 min",d:"olio, pepe, prezzemolo",p:["Cuoci il riso e stufa carote e porri finché sono teneri.","Unisci la ricotta alle verdure con un goccio d’acqua calda, poi mescola al riso."]},
+{n:"Peperoni ripieni di patate e ricotta",s:"c",k:"formaggi",v:1,g:{peperoni:230,patate:270,ricotta:110,spinaci:100},t:"35 min",d:"olio, pepe",p:["Ammorbidisci i peperoni a metà in forno. Lessa le patate e cuoci gli spinaci.","Schiaccia le patate e mescola con spinaci e ricotta. Riempi i peperoni e inforna finché sono ben caldi."]},
+{n:"Tacchino con cavolfiore e riso al limone",s:"p",k:"bianca",v:0,g:{tacchino:155,cavolfiore:210,riso:82},t:"26 min",d:"olio, limone, timo",p:["Cuoci il riso e fai cuocere il cavolfiore al vapore.","Cuoci il tacchino a strisce finché è cotto al cuore, condisci con limone e timo e servi con il riso e il cavolfiore."]},
+{n:"Pollo stufato al pomodoro con fagioli",s:"c",k:"bianca",v:0,g:{pollo:145,fagioli:140,passata:165,carote:110,patate:170},t:"32 min",d:"olio, alloro, origano",p:["Lessa le patate a cubetti. Rosola il pollo a pezzi con carote e origano.","Aggiungi passata, fagioli scolati e alloro. Cuoci finché il pollo è cotto al cuore e servi sulle patate."]},
+{n:"Insalata tiepida di tacchino, ceci e broccoli",s:"p",k:"bianca",v:0,g:{tacchino:145,ceci:155,broccoli:180,patate:185},t:"28 min",d:"olio, limone, prezzemolo",p:["Lessa le patate e cuoci i broccoli al vapore. Cuoci il tacchino a striscioline finché è cotto al cuore.","Mescola tutto con ceci scolati, limone e prezzemolo."]},
+{n:"Cosce di pollo con zucca e ceci",s:"c",k:"bianca",v:0,g:{cosce:225,zucca:235,ceci:150,carote:100},t:"38 min",d:"olio, paprika, rosmarino",p:["Metti in teglia pollo, zucca e carote a pezzi con olio e rosmarino. Cuoci a 205 °C.","Aggiungi i ceci scolati verso la fine. Verifica che il pollo sia cotto al cuore prima di servire."]},
+{n:"Merluzzo, riso e spinaci al limone",s:"p",k:"pesce",v:0,g:{merluzzo:165,riso:92,spinaci:160},t:"22 min",d:"olio, limone, prezzemolo",p:["Cuoci il riso e stufa gli spinaci. Elimina eventuali lische dal pesce.","Cuoci il filetto finché si sfalda, poi servi con il riso e gli spinaci al limone."]},
+{n:"Merluzzo con fagioli e cavolfiore al forno",s:"c",k:"pesce",v:0,g:{merluzzo:165,fagioli:155,cavolfiore:210,patate:185},t:"32 min",d:"olio, limone, paprika",p:["Precuoci patate e cavolfiore, poi trasferiscili in teglia con i fagioli scolati.","Controlla le lische, aggiungi il pesce e cuoci a 200 °C finché il filetto è opaco e si sfalda."]},
+{n:"Salmone con patate schiacciate e cetriolo",s:"p",k:"pesce",v:0,g:{salmone:140,patate:290,cetrioli:150},t:"29 min",d:"olio, limone, aneto",p:["Lessa le patate, scolale e schiacciale grossolanamente. Affetta il cetriolo e condiscilo con aneto e limone.","Controlla che il salmone non abbia lische e cuocilo finché è opaco. Servi con patate e cetriolo."]},
+{n:"Sformato di merluzzo, carote e patate",s:"c",k:"pesce",v:0,g:{merluzzo:165,carote:140,patate:300,porri:95},t:"38 min",d:"olio, limone, prezzemolo",p:["Lessa le patate e schiacciale. Stufa carote e porri, controlla le lische del pesce e aggiungilo a pezzetti.","Copri con le patate in teglia e cuoci finché il ripieno è ben caldo e il pesce cotto."]},
+{n:"Lonza e cavolo in padella con patate",s:"p",k:"rossa",v:0,g:{maiale:150,cavolo:175,patate:270,porri:70},t:"25 min",d:"olio, cumino",p:["Lessa le patate e stufa cavolo e porro con cumino.","Cuoci la lonza a strisce e servi con patate e cavolo."]},
+{n:"Macinato con cavolfiore, carote e riso",s:"c",k:"rossa",v:0,g:{manzo:140,cavolfiore:200,carote:110,riso:80,passata:100},t:"32 min",d:"olio, timo, pepe",p:["Cuoci il riso e ammorbidisci cavolfiore e carote. Rosola il macinato, separandolo con un cucchiaio.","Aggiungi le verdure e la passata. Cuoci il macinato completamente e servi con il riso."]},
+{n:"Ceci e cavolfiore con patate al limone",s:"c",k:"legumi",v:1,g:{ceci:190,cavolfiore:190,patate:250,spinaci:80},t:"28 min",d:"olio, limone, paprika",p:["Cuoci patate e cavolfiore finché sono teneri. Rosolali brevemente con paprika in padella.","Aggiungi i ceci scolati e gli spinaci, scalda e condisci con limone."]},
+{n:"Couscous con tofu e broccoli al limone",s:"p",k:"legumi",v:1,g:{couscous:82,tofu:170,broccoli:200,carote:80},t:"24 min",d:"olio, limone, paprika dolce",p:["Idrata il couscous e lessa o cuoci a vapore broccoli e carote. Rosola il tofu con paprika dolce.","Mescola tutto e completa con limone."]},
+{n:"Minestra di riso, porri e zucca",s:"c",k:"cereali",v:1,g:{riso:100,porri:120,zucca:240,carote:90},t:"30 min",d:"olio, alloro, acqua",p:["Stufa il porro, poi unisci zucca e carote. Copri con acqua e porta a bollore.","Aggiungi il riso e l’alloro, cuoci finché è tenero e servi con olio."]},
+...RICETTE_T37.map(([r])=>r)
 ];
 // contorni: v = verdura per pranzo e cena, f = frutta per colazione (porzione fissa per adulto)
 const SIDES=[
@@ -1082,6 +1678,93 @@ const TR={
 const tx=s=>LANG==="en"&&typeof s==="string"&&Object.hasOwn(TR,s)?TR[s]:s;
 // ricette e contorni in inglese: nome italiano → [nome, dalla dispensa, passaggi]
 const RX={
+...Object.fromEntries(RICETTE_T37.map(([r,en])=>[r.n,en])),
+"Gallette morbide d’avena e carota":["Soft oat and carrot cakes","oil, cinnamon",["Finely grate the carrot and mix with mashed banana, oats and cinnamon.","Shape into small rounds and cook on both sides in a lightly oiled pan."]],
+"Pane caldo con zucchine e crema di ceci":["Warm zucchini toast with chickpea spread","oil, lemon, mint",["Pan-cook chopped zucchini until soft.","Mash drained chickpeas with lemon and mint. Spread over toast and top with zucchini."]],
+"Riso cremoso con pera e cacao":["Creamy pear and cocoa rice","unsweetened cocoa, water",["Cook the rice in water until soft. Add diced pear in the last few minutes.","Mash the banana, stir it into the rice and finish with cocoa."]],
+"Uova sode con patate e pomodoro":["Hard-boiled eggs with potatoes and tomato","oil, oregano",["Boil diced potatoes and cook eggs until the yolks are firm.","Serve with tomato wedges, oil and oregano."]],
+"Yogurt con pera e avena tostata":["Yogurt with pear and toasted oats","cinnamon",["Toast the oats for a few minutes in a dry pan, stirring.","Spoon yogurt into a bowl and top with pear, oats and cinnamon."]],
+"Patate al mattino con crema di tofu e porro":["Breakfast potatoes with tofu and leek mash","oil, pepper, water",["Boil chopped potatoes. Braise sliced leek in a little water and oil.","Mash tofu with the tender leeks, heat the mash and serve with the potatoes."]],
+"Pane e ricotta con mela al limone":["Ricotta toast with lemon apple","lemon, cinnamon",["Toast the bread and spread with ricotta.","Finely slice the apple, sprinkle with lemon and arrange on the toast with cinnamon."]],
+"Avena al cucchiaio con banana e mandarino":["Warm oats with banana and mandarin","water, cinnamon",["Simmer oats in water, stirring until creamy.","Stir in mashed banana and finish with mandarin and cinnamon."]],
+"Pera allo yogurt e cacao":["Pear with cocoa yogurt","unsweetened cocoa",["Stir a little cocoa into the yogurt. Dice the pear and serve it in the yogurt."]],
+"Mandarino e mela al cucchiaio":["Mandarin and apple bowl","lemon",["Segment the mandarin and grate the apple. Mix with a little lemon juice."]],
+"Patate morbide con crema di ceci":["Tender potatoes with chickpea dip","lemon, oil, paprika",["Boil small pieces of potato until tender.","Mash drained chickpeas with lemon, a little water and oil, then serve with potatoes and paprika."]],
+"Crostino con tofu e carota":["Tofu and carrot toast","oil, lemon",["Mash tofu with a little oil and lemon.","Finely grate the carrot and mix into the tofu, then spread on toast."]],
+"Pera cotta alla vaniglia":["Vanilla poached pear","vanilla, water",["Cut the pear into wedges and cook covered in a little water with vanilla until tender."]],
+"Crema di banana e yogurt":["Banana yogurt cream","lemon zest",["Mash the banana and whisk into the yogurt. Add a little washed lemon zest."]],
+"Morbido di avena e mela in padella":["Soft apple oat cakes","oil, cinnamon",["Grate the apple and mash the banana. Mix with oats and cinnamon.","Cook in small thin rounds on both sides in a lightly oiled pan."]],
+"Fagioli tiepidi alla paprika":["Warm paprika beans","oil, sweet paprika, lemon",["Rinse the beans, warm them in a pan with paprika and a little oil, then dress with lemon."]],
+"Minestra di ceci, porri e riso":["Chickpea, leek and rice soup","oil, bay leaf, water",["Braise sliced leek and carrot, then add rice, water and bay.","Simmer until the rice is tender. Stir in drained chickpeas and heat through before serving."]],
+"Sformato di lenticchie con purè di cavolfiore":["Lentil bake with cauliflower mash","oil, thyme",["Cook lentils with carrots and thyme. Add passata and simmer until thick.","Boil potatoes and cauliflower, mash and spread over the lentils. Bake in a hot oven until golden."]],
+"Riso con fagioli bianchi e peperoni arrostiti":["Rice with white beans and roasted peppers","oil, vinegar, oregano",["Roast pepper strips while the rice cooks.","Toss rice with drained beans, peppers and diced tomato. Dress with oil, vinegar and oregano."]],
+"Zucchine ripiene di lenticchie e riso":["Zucchini stuffed with lentils and rice","oil, thyme, garlic",["Cook lentils and rice. Halve the zucchini, scoop out the centres and chop them.","Cook the centres with passata and thyme, mix with the filling, stuff and bake at 200 °C until tender."]],
+"Pasta con crema di ceci e porri":["Pasta with chickpea and leek sauce","oil, lemon, pepper",["Braise leeks until soft. Blend half with drained chickpeas and a little cooking water.","Toss with cooked pasta, remaining leeks and a little lemon."]],
+"Zuppa di lenticchie, broccoli e patate":["Lentil, broccoli and potato soup","oil, bay leaf",["Soften the onion. Add lentils, diced potatoes, water and bay leaf.","Add broccoli towards the end. Serve when lentils and vegetables are tender."]],
+"Riso tiepido con tofu, cetriolo e carota":["Warm rice with tofu, cucumber and carrot","oil, vinegar, ginger",["Cook the rice. Brown diced tofu with ginger and thinly sliced carrots.","Toss with rice and chopped cucumber. Finish with a splash of vinegar."]],
+"Tofu ai funghi con crema di patate":["Mushroom tofu with mashed potatoes","oil, parsley",["Boil potatoes and mash with cooking water and oil.","Sauté mushrooms, leeks and chopped tofu until hot through. Serve with the mash."]],
+"Riso con zucchine e carote al limone":["Lemon rice with zucchini and carrots","oil, lemon, mint",["Cook rice. Soften carrots and leek before adding diced zucchini.","Fold into the rice and add lemon and mint."]],
+"Gnocchi con crema di zucca e porri":["Gnocchi with pumpkin and leek sauce","oil, sage, pepper",["Cook pumpkin and leeks with a little water and sage until soft, then mash.","Cook gnocchi according to the packet and toss with the sauce."]],
+"Uova sode con couscous e spinaci":["Hard-boiled eggs with couscous and spinach","oil, lemon",["Boil eggs until the yolks are hard. Hydrate the couscous.","Sauté spinach and toss into the couscous with tomatoes. Top with eggs and lemon."]],
+"Frittata al forno con cavolo e porri":["Baked cabbage and leek frittata","oil, pepper",["Boil diced potatoes and braise cabbage and leeks.","Transfer to a dish, cover with beaten eggs and bake at 190 °C until the centre is set."]],
+"Riso con ricotta, carote e porri":["Rice with ricotta, carrots and leeks","oil, pepper, parsley",["Cook the rice and braise carrots and leeks until tender.","Stir ricotta into the vegetables with a splash of hot water, then fold into the rice."]],
+"Peperoni ripieni di patate e ricotta":["Peppers stuffed with potato and ricotta","oil, pepper",["Soften pepper halves in the oven. Boil potatoes and cook the spinach.","Mash potatoes and mix with spinach and ricotta. Stuff the peppers and bake until hot through."]],
+"Tacchino con cavolfiore e riso al limone":["Turkey with cauliflower and lemon rice","oil, lemon, thyme",["Cook the rice and steam the cauliflower.","Cook turkey strips through, season with lemon and thyme and serve with the rice and cauliflower."]],
+"Pollo stufato al pomodoro con fagioli":["Tomato chicken stew with white beans","oil, bay leaf, oregano",["Boil diced potatoes. Brown chopped chicken with carrots and oregano.","Add passata, drained beans and bay leaf. Cook the chicken through and serve over the potatoes."]],
+"Insalata tiepida di tacchino, ceci e broccoli":["Warm turkey, chickpea and broccoli salad","oil, lemon, parsley",["Boil potatoes and steam broccoli. Cook turkey strips through.","Mix with drained chickpeas, lemon and parsley."]],
+"Cosce di pollo con zucca e ceci":["Chicken thighs with pumpkin and chickpeas","oil, paprika, rosemary",["Put chicken, chopped pumpkin and carrots in a roasting dish with oil and rosemary. Roast at 205 °C.","Add drained chickpeas towards the end. Check that the chicken is cooked through before serving."]],
+"Merluzzo, riso e spinaci al limone":["Pollock with lemon rice and spinach","oil, lemon, parsley",["Cook the rice and soften the spinach. Remove any bones from the fish.","Cook the fillet until flaky, then serve with rice and lemon spinach."]],
+"Merluzzo con fagioli e cavolfiore al forno":["Baked pollock with beans and cauliflower","oil, lemon, paprika",["Parcook potatoes and cauliflower, then put them in a dish with drained beans.","Check for bones, add the fish and bake at 200 °C until opaque and flaky."]],
+"Salmone con patate schiacciate e cetriolo":["Salmon with crushed potatoes and cucumber","oil, lemon, dill",["Boil, drain and roughly crush the potatoes. Slice the cucumber and dress with dill and lemon.","Check the salmon for bones and cook until opaque. Serve with potatoes and cucumber."]],
+"Sformato di merluzzo, carote e patate":["Pollock, carrot and potato pie","oil, lemon, parsley",["Boil and mash the potatoes. Braise carrots and leeks, check the fish for bones and add it in pieces.","Top with the potatoes in a baking dish and cook until the filling is hot and the fish cooked through."]],
+"Lonza e cavolo in padella con patate":["Pork loin and cabbage skillet with potatoes","oil, caraway",["Boil the potatoes and braise cabbage and leek with caraway.","Cook pork loin strips through and serve with the potatoes and cabbage."]],
+"Macinato con cavolfiore, carote e riso":["Minced meat with cauliflower, carrots and rice","oil, thyme, pepper",["Cook the rice and soften cauliflower and carrots. Brown the mince, breaking it up with a spoon.","Add vegetables and passata. Cook the mince through and serve with rice."]],
+"Ceci e cavolfiore con patate al limone":["Chickpeas, cauliflower and lemon potatoes","oil, lemon, paprika",["Cook potatoes and cauliflower until tender. Brown briefly with paprika in a pan.","Add drained chickpeas and spinach, heat and finish with lemon."]],
+"Couscous con tofu e broccoli al limone":["Lemon couscous with tofu and broccoli","oil, lemon, sweet paprika",["Hydrate the couscous and boil or steam broccoli and carrots. Brown tofu with sweet paprika.","Toss together and finish with lemon."]],
+"Minestra di riso, porri e zucca":["Rice soup with leeks and pumpkin","oil, bay leaf, water",["Soften the leek, then add pumpkin and carrots. Cover with water and bring to the boil.","Add rice and bay, simmer until tender and finish with oil."]],
+"Porridge di riso con banana e cannella":["Banana and cinnamon rice porridge","cinnamon",["Cook the rice in water according to the packet, keeping it soft and creamy.","Mash the banana and stir it into the hot rice with cinnamon."]],
+"Avena al forno con pera":["Pear baked oats","cinnamon",["Mash the banana and mix with oats, a splash of water and cinnamon.","Add diced pear and bake in a small dish at 190 °C until set."]],
+"Crema di ceci e pomodoro su pane":["Chickpea and tomato breakfast toast","oil, lemon",["Drain and mash the chickpeas with lemon and a little oil.","Toast the bread, spread with chickpeas and top with sliced tomato."]],
+"Patate e uova con spinaci in padella":["Potato, egg and spinach breakfast skillet","oil, pepper",["Dice the potatoes and boil until nearly tender.","Brown them in a little oil, add spinach and pour over beaten eggs. Cook until set."]],
+"Tofu strapazzato con pomodoro":["Scrambled tofu with tomato","oil, turmeric",["Crumble the tofu into a pan and cook with a little oil and turmeric.","Add diced tomato and cook briefly. Serve with toast."]],
+"Ciotola di yogurt con mela e mandarino":["Yogurt bowl with apple and mandarin","cinnamon",["Finely chop the apple and segment the mandarin.","Top the yogurt with oats, fruit and cinnamon."]],
+"Crostoni con fagioli e porro":["White bean and leek toast","oil, rosemary",["Thinly slice the leek and pan-cook until tender.","Add drained beans, mash with rosemary and a little oil, and spread on toast."]],
+"Frittelle di banana e avena senza uova":["Eggless banana oat pancakes","water, oil, cinnamon",["Finely grind the oats and mix with mashed banana and enough water for a thick batter.","Cook small pancakes in a lightly oiled pan, turning them when the edges are set."]],
+"Banana al cacao":["Banana with cocoa","unsweetened cocoa, cinnamon",["Mash the banana and dust with a little cocoa and cinnamon."]],
+"Mela calda alla cannella":["Warm cinnamon apple","water, cinnamon",["Chop the apple and cook it covered with a splash of water until tender. Add cinnamon."]],
+"Arancia e pera al limone":["Orange and pear fruit salad","lemon",["Peel the orange, chop the pear and toss with a few drops of lemon juice."]],
+"Pane con crema di fagioli al limone":["Bread with lemon white bean spread","lemon, oil",["Mash drained beans with lemon and a little oil, then spread on a slice of bread."]],
+"Bocconcini di tofu alla paprika":["Paprika tofu bites","sweet paprika, oil",["Pat the tofu dry, dice and brown in a little oil. Season with sweet paprika."]],
+"Ricotta con pera e cannella":["Ricotta with pear and cinnamon","cinnamon",["Slice the pear, serve with ricotta and finish with cinnamon."]],
+"Carote morbide con crema di ceci":["Soft carrots with chickpea dip","lemon, oil",["Steam the carrots until tender.","Blend drained chickpeas with lemon, oil and a little water and serve with the carrots."]],
+"Yogurt con mela grattugiata e avena":["Yogurt with grated apple and oats","cinnamon",["Grate the apple and stir in yogurt, oats and cinnamon."]],
+"Lenticchie con cavolfiore arrosto":["Lentils with roasted cauliflower","oil, lemon, cumin",["Roast cauliflower and carrots at 210 °C with oil and cumin until tender.","Cook lentils according to the packet and drain. Toss with the vegetables and dress with lemon."]],
+"Patata al forno ripiena di fagioli e pomodoro":["Baked potato stuffed with tomato beans","oil, paprika, oregano",["Halve the potato and bake cut-side down at 210 °C until tender.","Cook onion, passata and drained beans with paprika. Open the potato and fill it."]],
+"Fagioli, patate e cavolo tiepidi":["Warm beans, potato and cabbage","oil, vinegar, cumin",["Boil diced potatoes and braise sliced cabbage with a little oil and water.","Add drained beans, potatoes and caraway. Serve warm with a splash of vinegar."]],
+"Cavolfiore al curry con fagioli bianchi":["Cauliflower and white bean curry","oil, curry powder",["Fry onion with curry powder. Add cauliflower, passata and a little water, cover and cook until tender.","Stir in drained beans and serve with rice cooked separately."]],
+"Riso al limone con ceci e broccoli":["Lemon rice with chickpeas and broccoli","oil, lemon, parsley",["Cook the rice and boil or steam the broccoli.","Warm drained chickpeas in a little oil, add rice and broccoli and finish with lemon and parsley."]],
+"Peperoni ripieni di riso e ceci":["Peppers stuffed with rice and chickpeas","oil, oregano, paprika",["Boil the rice. Halve the peppers and soften in the oven at 200 °C.","Mix rice, drained chickpeas, passata and spices. Stuff and bake again until hot."]],
+"Tofu croccante con patate e cavolo":["Crisp tofu with potatoes and cabbage","oil, paprika, vinegar",["Boil diced potatoes. Pat the tofu dry and brown with paprika.","Sauté or braise the sliced cabbage, combine in the pan and finish with a little vinegar."]],
+"Tofu al pomodoro con polpette di riso":["Tomato tofu with rice patties","oil, garlic, oregano",["Cook the rice until tender, mash some and form small patties to brown in a pan.","Simmer passata with diced tofu, garlic and oregano. Add spinach and serve with the patties."]],
+"Gnocchi con crema di fagioli e porri":["Gnocchi with leek and white bean sauce","oil, pepper",["Braise sliced leeks in a little oil and water. Blend some with the drained beans.","Cook gnocchi according to the packet and toss in the sauce with a little cooking water."]],
+"Lenticchie e patate al forno con cavolo":["Oven-baked lentils and potatoes with cabbage","oil, bay leaf, paprika",["Cook lentils with bay until tender and boil sliced potatoes.","Braise the cabbage and mix with lentils and passata. Top with potatoes and bake at 205 °C until golden."]],
+"Couscous con fagioli e carote al cumino":["White bean and cumin carrot couscous","oil, cumin, lemon",["Hydrate the couscous according to the packet and fluff with a fork.","Sauté carrots with cumin, then add spinach and drained beans. Toss with couscous and lemon."]],
+"Pasta al cavolfiore con briciole croccanti":["Cauliflower pasta with crisp crumbs","oil, garlic, optional chilli",["Cook cauliflower until soft and mash with softened onion and pasta water.","Toast breadcrumbs in a little oil and scatter over the cooked pasta tossed with the sauce."]],
+"Riso con uova sode, porri e carote":["Rice with hard-boiled eggs, leeks and carrots","oil, lemon",["Cook the rice and boil the eggs until the yolks are firm.","Braise leeks and carrots, fold into the rice and top with peeled eggs and a little lemon."]],
+"Sformato di uova, broccoli e patate":["Egg, broccoli and potato bake","oil, pepper",["Parboil sliced potatoes and broccoli.","Transfer to a baking dish, pour over beaten eggs and bake at 190 °C until the centre is fully set."]],
+"Gnocchi con porri e ricotta":["Gnocchi with leek and ricotta","oil, pepper",["Braise the leeks with a little water and oil, then stir in ricotta.","Cook gnocchi according to the packet and toss with the sauce."]],
+"Patate, cavolo e mozzarella al forno":["Potato, cabbage and mozzarella bake","oil, oregano, pepper",["Boil sliced potatoes and braise cabbage. Layer in a dish with drained mozzarella and oregano.","Bake at 200 °C until hot and golden."]],
+"Pollo al limone con couscous e porri":["Lemon chicken with leek couscous","oil, lemon, thyme",["Hydrate the couscous. Braise leeks and carrots in a pan.","Cook chicken strips through, finish with lemon and thyme, and toss with the couscous and vegetables."]],
+"Tacchino al forno con zucca e cavolo":["Tray-baked turkey with pumpkin and cabbage","oil, rosemary",["Roast chopped potatoes and pumpkin with rosemary at 205 °C.","Add turkey and cabbage wedges for the second part of cooking. Serve once the turkey is cooked through."]],
+"Pollo e cavolo in padella con riso":["Chicken and cabbage skillet with rice","oil, sweet paprika",["Cook the rice separately. Brown chicken strips and onion with paprika, then add the cabbage.","Continue until the chicken is cooked through and the cabbage is tender. Serve with rice."]],
+"Polpette di tacchino e patate al sugo":["Turkey and potato meatballs in tomato sauce","oil, parsley",["Boil part of the potatoes and mash them. Mince the turkey and shape into balls with the potato and parsley.","Brown, add passata and diced carrots and cook through. Serve with remaining boiled potatoes."]],
+"Merluzzo con couscous e porri":["Pollock with couscous and leeks","oil, lemon, dill",["Hydrate the couscous and braise leeks and carrots. Check the fish for bones.","Pan-cook the fillet with lemon until opaque and flaky. Serve with vegetables and couscous."]],
+"Merluzzo al cartoccio con zucca e patate":["Fish parcels with pumpkin and potatoes","oil, lemon, parsley",["Parcook sliced pumpkin and potatoes. Remove any bones from the fish.","Seal fish, vegetables and lemon in parchment and bake at 200 °C until the fillet is opaque."]],
+"Insalata tiepida di salmone, fagioli e patate":["Warm salmon, bean and potato salad","oil, lemon, parsley",["Boil the potatoes and check the fillet for bones.","Cook salmon until opaque, flake and toss with potatoes, drained beans and lettuce. Dress with lemon."]],
+"Salmone in padella con cavolo e carote":["Pan-cooked salmon with cabbage and carrots","oil, lemon, dill",["Cook the rice and braise sliced cabbage and carrots. Check the fillet for bones.","Pan-cook salmon until opaque and serve with rice and lemon vegetables."]],
+"Risotto al cavolo e carote":["Cabbage and carrot risotto","oil, water, pepper",["Soften thinly sliced onion, carrot and cabbage. Add the rice and toast for one minute.","Add hot water gradually and stir until the rice is creamy and tender."]],
+"Stufato di ceci e cavolo con patate":["Chickpea and cabbage stew with potatoes","oil, bay leaf, paprika",["Soften cabbage and carrots with oil and paprika. Add diced potatoes and water.","Simmer with bay until the potatoes are tender, then add drained chickpeas and heat through."]],
+"Lonza al limone con carote e riso":["Lemon pork loin with carrots and rice","oil, lemon, thyme",["Cook rice and soften carrots in a pan with a little water.","Brown and cook the pork loin, season with lemon and thyme and serve with carrots and rice."]],
 "Lenticchie in umido con riso":["Stewed lentils with rice","oil, bay leaf, salt",["Fry the diced onion and carrots in oil for 5 minutes.","Add the rinsed lentils, the passata, the bay leaf and water to cover.","Simmer for 30–35 minutes until soft and the sauce is thick. Add salt.","Serve with rice boiled separately."]],
 "Hummus di ceci con verdure e pane":["Chickpea hummus with vegetables and bread","oil, lemon, garlic, paprika, salt",["Blend the drained chickpeas with 2 tablespoons of oil, the juice of half a lemon, half a garlic clove, salt and a little water until creamy.","Cut the carrots and cucumbers into sticks.","Serve the hummus with a drizzle of oil and paprika, the vegetables and the bread."]],
 "Burger di fagioli con insalata":["Bean burgers with salad","breadcrumbs, oil, paprika, salt",["Mash the drained beans with a fork and mix in chopped onion, paprika, salt and 2 tablespoons of breadcrumbs.","Shape into burgers and cook in a pan with a little oil, 4 minutes per side.","Serve in the bread with lettuce and sliced tomatoes."]],
@@ -1194,7 +1877,7 @@ const rd=r=>LANG==="en"&&RX[r.n]?RX[r.n][1]:r.d;    // ingredienti dalla dispens
 const rp=r=>LANG==="en"&&RX[r.n]?RX[r.n][2]:r.p;    // passaggi
 const ingN=i=>tx(I[i][0]);                           // nome dell'ingrediente
 // testi fissi della pagina (elementi con data-i / data-ia)
-const STATIC_EN={tourB:"How Nocciola works",appSettings:"Settings",appearanceL:"Appearance",appearanceCurrent:"Current",appearanceCream:"Cream",languageL:"Language",listTools:"More actions",settingsS:"Customise the menu",adviceS:"Tips and details",regionL:"Where do you shop?",regionA:"Region",flyerS:"Official flyers",dealSearch:"Search products",brand:"Nocciola, smart grocery shopping",payoff:"smart shopping",sections:"Sections",tMenu:"Menu",tSpesa:"Shopping",tEq:"Balance",tOff:"Deals",tTana:"Den",
+const STATIC_EN={recipeBook:"Recipe book",tourB:"How Nocciola works",appSettings:"Settings",appearanceL:"Appearance",appearanceCurrent:"Current",appearanceCream:"Cream",languageL:"Language",listTools:"More actions",settingsS:"Customise the menu",adviceS:"Tips and details",regionL:"Where do you shop?",regionA:"Region",flyerS:"Official flyers",dealSearch:"Search products",brand:"Nocciola, smart grocery shopping",payoff:"smart shopping",sections:"Sections",tMenu:"Menu",tSpesa:"Shopping",tEq:"Balance",tOff:"Deals",tTana:"Den",
 heroA:"Nocciola’s tips",mascotA:"Nocciola the mouse: open the den",kpisA:"Menu details",famH:"Who eats at home?",cfgL:"Menu settings",actL:"Physical activity (adults and teens)",daysL:"Menu days",
 dtL:"Shopping day",budL:"Weekly budget",budP:"none",outL:"Lunch, Monday to Friday",shopsL:"Shops to visit",prioL:"Priority",dietL:"Dietary needs",vgL:"Vegetarian only",
 bcL:"Cook once, eat twice <span class=\"muted small\">(double portion at dinner, next day’s lunch)</span>",menuH:"This week’s menu",
@@ -1407,12 +2090,19 @@ const tally=R=>{const c={};R.days.forEach(d=>d.meals.forEach(m=>{if(!m.r||!MAIN(
 // confezione: quella vera dell'offerta se nota (g), altrimenti una tipica (I[i][2]); a peso → si compra quanto serve (arrotondato a 50 g)
 const takeQ=(need,pk)=>{if(need<=0)return {np:0,buy:0,pk};if(pk===0){const buy=Math.ceil(need/50-1e-9)*50;return {np:1,buy,pk}}const np=Math.ceil(need/pk-1e-9);return {np,buy:np*pk,pk}};
 // costo in centesimi: prezzo di una confezione arrotondato al centesimo × numero di confezioni (a peso: quantità comprata × €/kg)
-const packCents=(q,price)=>q.pk>0?q.np*Math.round(q.pk*price/10):Math.round(q.buy*price/10);
+// T31: l'arrotondamento si fa nella valuta del listino (cifre della valuta: HUF 0, PLN 2…), dal prezzo originale p0 se c'è;
+// poi si torna in «centesimi di Vienna» (Austria: identico a prima). Es. 2 × 399 HUF = 798 HUF, non 800.
+const CD={};const curDig=c=>CD[c]??(CD[c]=new Intl.NumberFormat("en",{style:"currency",currency:c}).resolvedOptions().maximumFractionDigits);
+const packCents=(q,price,o)=>{const k=mf();if(k===1&&!(o&&o.p0!=null))return q.pk>0?q.np*Math.round(q.pk*price/10):Math.round(q.buy*price/10);
+ const loc=o&&o.p0!=null?o.p0:price*k,u=10**curDig(curOf()),minor=q.pk>0?q.np*Math.round(q.pk*loc*u/1000):Math.round(q.buy*loc*u/1000);
+ return minor/u/k*100};
+// prezzo di UNA confezione in euro di Vienna, arrotondato come nel totale (stessa valuta del listino): lista della spesa e scheda Offerte
+const packPrice=(pk,price,o)=>packCents({pk,np:1,buy:pk},price,o)/100;
 // tra il prezzo di riferimento e tutte le offerte ammesse sceglie quella che costa meno da pagare per «need» grammi;
 // a pari costo meno avanzo, poi il prezzo di riferimento (nessun negozio in più). Restituisce {np,buy,pk,price,off,real,o,cc}
 function pickPack(i,need,offers){
  let r=Object.assign(takeQ(need,I[i][2]),{price:ref(i),off:false});r.cc=packCents(r,r.price);
- for(const b of offers){const q=Object.assign(takeQ(need,Number.isFinite(b.g)?b.g:I[i][2]),{price:b.p,off:true,real:Number.isFinite(b.g),o:b});q.cc=packCents(q,b.p);
+ for(const b of offers){const q=Object.assign(takeQ(need,Number.isFinite(b.g)?b.g:I[i][2]),{price:b.p,off:true,real:Number.isFinite(b.g),o:b});q.cc=packCents(q,b.p,b);
   if(q.cc<r.cc||(q.cc===r.cc&&q.buy<r.buy))r=q}
  return r}
 // ---------- motore del menu ----------
@@ -1447,7 +2137,10 @@ for(let k=0;k<d;k++){
   if(n<.001){meals.push({sl,out:true});continue}
   let R=null,G=null,leftover=false;
   // keepExcluded: nell'anteprima del menu confermato i piatti già fissati restano anche se nel frattempo esclusi (es. 1 stella) (v24, da ChatGPT)
-  const pinned=PIN[key]&&(o.keepExcluded||!EX.has(PIN[key]))&&RCa.find(r=>r.n===PIN[key]&&fits(r,sl));
+  let pinned=PIN[key]&&(o.keepExcluded||!EX.has(PIN[key]))&&RCa.find(r=>r.n===PIN[key]&&fits(r,sl)),ruled=null;
+  // T09: con bambini il tonno è un limite obbligatorio (al massimo tunaMax a settimana), anche per i piatti scelti a mano:
+  // oltre il limite la scelta non vale, il motore sceglie un altro piatto e il pasto lo segnala
+  if(pinned&&isKids&&pinned.g.tonno&&tuna>=tunaMax){pinned=null;ruled="tonno"}
   if(pinned){R=pinned;G=portion(R,sl)}
   else if(forced[key]){R=forced[key];G=portion(R,sl);leftover=true}
   else{
@@ -1462,7 +2155,7 @@ for(let k=0;k<d;k++){
     const lim=MAIN(sl)&&L[r.k];if(lim){const c=cnt[r.k]||0;if(c>=lim.max)p+=100;else if(c<lim.min)p-=6}
     if(MAIN(sl)&&isVegDish(r)&&(cnt.verdure||0)<L.verdure.min)p-=5;
     if(r.k&&r.k!=="cereali"&&r.k!=="col"&&dayCats.includes(r.k))p+=8;
-    if(isKids&&r.g.tonno&&tuna>=tunaMax)p+=100; // tonno: al massimo una volta a settimana con bambini (mercurio)
+    if(isKids&&r.g.tonno&&tuna>=tunaMax)continue; // tonno: al massimo una volta a settimana con bambini (mercurio) – limite obbligatorio (T09)
     p+=prefP(r.n,w); // ricette che piacciono di più: preferite
     let sc;
     if(o.batch&&sl==="c"&&BATCH.has(r.n)&&batches<batchMax&&k+1<d&&!PIN[(k+1)+"-p"]&&nFor(k+1,"p")>.001){
@@ -1482,7 +2175,7 @@ for(let k=0;k<d;k++){
   if(def>60&&sl!=="s"){bread=Math.min(80,Math.max(30,Math.round(def/2.6/10)*10));used.push({g:{pane:bread},n});kcal+=bread*2.6}
   const all=Object.assign({},G);if(side)for(const i in side.g)all[i]=(all[i]||0)+side.g[i];if(bread)all.pane=(all.pane||0)+bread;
   let cost=0;for(const i in all)cost+=all[i]*n/1000*eff(i);
-  meals.push({sl,r:R,g:G,side,bread,all,kcal,prot:pr(all),fv:fv(all),cost,n,dropped:R.dropped,leftover,double,pinned:!!pinned});
+  meals.push({sl,r:R,g:G,side,bread,all,kcal,prot:pr(all),fv:fv(all),cost,n,dropped:R.dropped,leftover,double,pinned:!!pinned,ruled});
  }
  const home=meals.filter(m=>m.r);
  days.push({meals,kcal:home.reduce((a,m)=>a+m.kcal,0),target:home.reduce((a,m)=>a+SLOT[m.sl].kcal,0),outK:meals.filter(m=>m.out).reduce((a,m)=>a+SLOT[m.sl].kcal,0),prot:home.reduce((a,m)=>a+m.prot,0),fv:home.reduce((a,m)=>a+m.fv,0),cost:home.reduce((a,m)=>a+m.cost,0)});
@@ -1493,7 +2186,7 @@ const agg={};used.forEach(e=>{for(const i in e.g)agg[i]=(agg[i]||0)+e.g[i]*e.n})
 const items=[];let tt=0,bb=0,ww=0,CO=0,pa=0,pt=0;
 for(const i in agg){const g=agg[i],pan=PAN[i]||0,fromP=Math.min(g,pan),need=g-fromP,q=buyQty(i,need),{np,buy,pk}=q,c=q.cc/100,left=buy-need+(pan-fromP),real=!!q.real,bo=q.off?q.o:null,plain=take(need,I[i][2]),pc0=packCents(plain,ref(i))/100;
  tt+=c;bb+=pc0;ww+=left/1000*q.price;CO+=g/1000*co2k(i);const p=g*I[i][4]/100;pt+=p;if(ANIMAL.has(i))pa+=p;
- items.push({i,panKey:pantryKey(i),nm:nm(i),g,pk,np,buy,real,c,left,fromP,s:bo?bo.s:"",pp:pk>0?Math.round(pk*q.price/10)/100:0,off:bo?{s:bo.s,p:bo.p,d:bo.d,a:bo.a,g:bo.g,pc:Math.round((1-bo.p/ref(i))*100)}:null,sv:bo?Math.max(0,pc0-c):0})}
+ items.push({i,panKey:pantryKey(i),nm:nm(i),g,pk,np,buy,real,c,left,fromP,s:bo?bo.s:"",pp:pk>0?packPrice(pk,q.price,q.o):0,off:bo?{s:bo.s,p:bo.p,d:bo.d,a:bo.a,g:bo.g,pc:Math.round((1-bo.p/ref(i))*100)}:null,sv:bo?Math.max(0,pc0-c):0})}
 const bestS={};for(const i in best)bestS[i]={s:best[i].s,p:best[i].p,pc:Math.round((1-best[i].p/ref(i))*100)};
 items.forEach(x=>{if(x.off)bestS[x.i]={s:x.off.s,p:x.off.p,pc:x.off.pc}}); // i bollini dei piatti mostrano l'offerta usata davvero nella spesa
 return {t,d,region:P.region,days,best:bestS,mo,items,tt,bb,ww,co2:CO,plant:pt?1-pa/pt:0,cnt,L,nHome,pan:Object.assign({},PAN),diet:P.diet.map(k=>DIETS[k]&&DIETS[k].lab).filter(Boolean),toddler:(P.to||0)>0,kids:isKids,batches};
@@ -1552,7 +2245,9 @@ const base={d:P.d,veg:P.veg,pantry:x.pantry||usablePantry(),pins:lock,keepExclud
 // «scelto da te» solo per i piatti scelti davvero con «Cambia» (l'ottimizzazione usa i pin internamente per tutti i pasti)
 // PINS.map blocca tutto il resto del menu; PINS.user = i pasti cambiati davvero con «Cambia»
 const mine=x.pins?(x.user||[]):(PINS&&PINS.t===t&&Array.isArray(PINS.user)?PINS.user:[]);
-const run=o=>{const R=compute(t,o),F=fast?R:improve(t,o,R,lock);F.days.forEach((d,k)=>d.meals.forEach(m=>{if(m.r)m.pinned=mine.includes(k+"-"+m.sl)}));return F};
+// T09: un piatto col tonno scelto a mano e tolto per il limite resta segnalato anche dopo l'ottimizzazione (che rifissa tutti i pasti)
+const tunaPin=n=>{const r=RC.find(x=>x.n===n);return !!(r&&r.g.tonno)};
+const run=o=>{const R=compute(t,o),F=fast?R:improve(t,o,R,lock);F.days.forEach((d,k)=>d.meals.forEach(m=>{if(!m.r)return;const key=k+"-"+m.sl;m.pinned=mine.includes(key);if(kids()&&lock[key]&&lock[key]!==m.r.n&&tunaPin(lock[key]))m.ruled="tonno"}));return F};
 let shop=null;
 if(P.shops<9){const R0=compute(t,Object.assign({},base,{w:2})),by={};R0.items.forEach(it=>{if(it.off)by[it.s]=(by[it.s]||0)+it.sv});const ranked=Object.keys(by).sort((a,b)=>by[b]-by[a]);
  shop={stores:ranked.slice(0,P.shops),diff:0};
@@ -1618,7 +2313,7 @@ return RC.map(adapt).filter(r=>r&&fits(r,sl)&&(!P.veg||r.v)&&!EX.has(r.n)&&r.n!=
  .map(r=>{const g=portion(r,sl);let c=0,deal=[];for(const i in g){c+=g[i]*n/1000*eff(i);if(R.best[i])deal.push(i)}
   const lc=MAIN(sl)&&R.L[cur.r.k],breaks=r.k!==cur.r.k&&lc&&(R.cnt[cur.r.k]||0)-1<lc.min?tx(CATS[cur.r.k].lab).toLowerCase():"";
   return {r,g,c,kcal:kc(g)+SLOT[sl].oil,deal,same:r.k===cur.r.k,breaks}})
- .sort((a,b)=>(!!a.breaks-!!b.breaks)*10+(b.same-a.same)*.8+(a.c-b.c)+(prefP(a.r.n)-prefP(b.r.n))).slice(0,3);
+ .sort((a,b)=>(!!a.breaks-!!b.breaks)*10+(b.same-a.same)*.8+(a.c-b.c)+(prefP(a.r.n)-prefP(b.r.n))).slice(0,5);
 }
 
 // ---------- disegno ----------
@@ -1758,6 +2453,7 @@ const r=m.r,n=m.n,chips=[],key=k+"-"+m.sl;
 if(m.leftover)chips.push(`<span class="pill good">${L("già pronto: avanzo di ieri sera","ready: last night’s leftovers")}</span>`);
 if(m.double)chips.push(`<span class="pill good">${L("doppia dose: domani a pranzo","double portion: tomorrow’s lunch")}</span>`);
 if(m.pinned)chips.push(`<span class="pill">${L("scelto da te","your pick")}</span>`);
+if(m.ruled==="tonno")chips.push(`<span class="pill warn">${L("cambiato: con i bambini tonno al massimo una volta a settimana","changed: with children, tuna at most once a week")}</span>`);
 if(stars(r.n))chips.push(`<span class="pill good" title="${L("Il tuo voto","Your rating")}">★ ${stars(r.n)}/5</span>`);
 for(const i in m.all){if(R.best[i])chips.push(`<span class="pill deal">${esc(R.best[i].s)} −${R.best[i].pc}% ${esc(tx(nm(i)).toLowerCase())}</span>`)}
 const seas=Object.keys(m.all).filter(i=>I[i][7]!=="x"&&inSeason(i,R.mo)&&i!=="cipolle"&&i!=="carote");if(seas.length)chips.push(`<span class="pill good">${L("di stagione","in season")}</span>`);
@@ -1783,7 +2479,7 @@ if(OPEN===key&&canSwap&&PEND&&PEND.key===key){const p=PEND;alts=`<div class="alt
 <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small" data-pick="${esc(p.name)}" data-key="${key}">${L("Conferma il cambio","Confirm the change")}</button><button class="btn ghost small" data-unpend="1">${L("Annulla","Cancel")}</button></div></div>`}
 else if(OPEN===key&&canSwap){const A=alternatives(R,k,m.sl);alts=`<div class="alts"><b>${L(`Al posto di “${esc(rn(r.n))}”:`,`Instead of “${esc(rn(r.n))}”:`)}</b>${A.length?A.map(a=>`<div class="alt"><div><span class="name">${esc(rn(a.r.n))}</span><span class="small muted"> · ${tx(CATLAB[a.r.k]||"")} · ${fmt(a.kcal)} kcal · ${eur(a.c)}</span>${a.deal.length?` <span class="pill deal">${L("in offerta:","on offer:")} ${a.deal.map(i=>esc(tx(nm(i)).toLowerCase())).join(", ")}</span>`:""}${a.breaks?` <span class="pill warn">${a.breaks} ${L("sotto il consigliato","below recommended")}</span>`:""}</div><button class="btn small" data-pick="${esc(a.r.n)}" data-key="${key}">${L("Scegli","Choose")}</button></div>`).join(""):`<p class="small muted" style="margin:6px 0 0">${L("Nessuna alternativa adatta a questo pasto con le tue regole.","No suitable alternative for this meal with your rules.")}</p>`}<button class="linkbtn small" data-close="1">${L("Chiudi","Close")}</button></div>`}
 return `<div class="meal${isDone?" done":""}"><div class="slot">${sl}<i class="num">${fmt(m.kcal)} kcal</i></div><div class="body"><div class="name">${m.leftover?L("Avanzo: ","Leftovers: "):""}${rn(r.n)}</div>${m.side||m.bread?`<div class="extra">${m.side?"+ "+rn(m.side.n):""}${m.side&&m.bread?" · ":""}${m.bread?`+ ${esc(tx(nm("pane")).toLowerCase())} (${m.bread} g ${L("a persona adulta","per adult")})`:""}</div>`:""}${chips.length?`<div class="chips">${chips.join("")}</div>`:""}${rateUI}
-<details class="rec"><summary>${m.leftover?L("Come fare","What to do"):L("Ricetta · ","Recipe · ")+r.t}</summary><div class="in">${recipe}${m.side?`<p style="margin:8px 0 0"><b>${rn(m.side.n)}:</b> ${list(m.side.g,n)}${rd(m.side)?`; ${rd(m.side)}`:""}.</p>${dietNote(m.side)}${steps(m.side)}`:""}${m.bread?`<p style="margin:8px 0 0"><b>${esc(tx(nm("pane")))}:</b> ${qty("pane",m.bread*n)} ${L("in tutto","in total")}.</p>`:""}</div></details>${alts}</div>
+<details class="rec"><summary>${m.leftover?L("Come fare","What to do"):L("Ricetta · ","Recipe · ")+r.t}</summary><div class="in">${recipe}${m.side?`<p style="margin:8px 0 0"><b>${rn(m.side.n)}:</b> ${list(m.side.g,n)}${rd(m.side)?`; ${rd(m.side)}`:""}.</p>${dietNote(m.side)}${steps(m.side)}`:""}${m.bread?`<p style="margin:8px 0 0"><b>${esc(tx(nm("pane")))}:</b> ${qty("pane",m.bread*n)} ${L("in tutto","in total")}.</p>`:""}${m.leftover?"":`<button type="button" class="linkbtn" data-share-recipe="${esc(r.n)}">${L("Condividi ricetta","Share recipe")}</button>`}</div></details>${alts}</div>
 <div class="side"><span class="num">${eur(m.cost)}</span>${cookBtn}${canSwap?`<br><button class="x chg" data-swap="${key}" aria-expanded="${OPEN===key}" title="${L("Scegli un altro piatto per questo pasto","Pick another dish for this meal")}">${L("Cambia","Change")}</button>`:""}${CONF||m.leftover?"":`<br><button class="x sec" data-ex="${esc(r.n)}" title="${L("Escludi dai prossimi menu","Leave out of future menus")}" aria-label="${L("Non mi piace","I don’t like it")}: ${esc(rn(r.n))} – ${L("escludi dai prossimi menu","leave out of future menus")}">${L("Non mi piace","I don’t like it")}</button>`}</div></div>`;
 }
 // settimana confermata: prima di cambiare un piatto mostro cosa cambia (altri pasti, avanzi, spesa) e chiedo conferma
@@ -1810,6 +2506,7 @@ else{const t=LAST.t,same=PINS&&PINS.t===t,map=same?Object.assign({},PINS.map):pi
 OPEN=null;render();
 }
 $("menu").onclick=e=>{const b=e.target.closest("button");if(!b)return;
+ if(b.dataset.shareRecipe){const r=RC.find(x=>x.n===b.dataset.shareRecipe);if(r)shareRecipe(r);return}
  if(b.dataset.cook){const [k,sl]=b.dataset.cook.split("-");toggleCook(+k,sl);return}
  if(b.dataset.swap){OPEN=OPEN===b.dataset.swap?null:b.dataset.swap;PEND=null;render();return}
  if(b.dataset.close){OPEN=null;PEND=null;render();return}
@@ -1908,7 +2605,7 @@ const all=ALL(),act=all.filter(o=>ok(o,t)),up=all.filter(o=>o.d>t),good=o=>o.p<I
 const query=$("deal-search").value.trim().toLocaleLowerCase(),store=$("deal-store").value;
 const rows=act.concat(up).filter(o=>(!store||o.s===store)&&(!query||[ingN(o.i),I[o.i][0]].some(label=>label.toLocaleLowerCase().includes(query)))).sort((a,b)=>(a.d>t)-(b.d>t)||good(b)-good(a)||a.s.localeCompare(b.s)||ingN(a.i).localeCompare(ingN(b.i)));
 $("deal-results").textContent=L(`${rows.length} offerte mostrate`,`${rows.length} deals shown`);
-$("ob").innerHTML=rows.map(o=>{const on=ok(o,t),cheaper=good(o),sc=Math.round((1-o.p/I[o.i][1])*100),u=o.i==="latte"?"l":"kg",kg=`${eur(Math.round((o.p+Number.EPSILON)*100)/100)}/${u}`,pp=o.g>0?Math.round(o.g*o.p/10)/100:0,id=o.u?"mia-"+o.k:oid(o);
+$("ob").innerHTML=rows.map(o=>{const on=ok(o,t),cheaper=good(o),sc=Math.round((1-o.p/I[o.i][1])*100),u=o.i==="latte"?"l":"kg",kg=`${eur(Math.round((o.p+Number.EPSILON)*100)/100)}/${u}`,pp=o.g>0?packPrice(o.g,o.p,o):0,id=o.u?"mia-"+o.k:oid(o);
  const more=`<details class="deal-more" data-deal="${esc(id)}"${DEALOPEN.has(id)?" open":""}><summary>${L("Dettagli offerta","Deal details")}</summary><dl>`
   +`<dt>${L("Zona","Area")}</dt><dd>${esc((o.regions||[DEFAULT_REGION]).map(regionName).join(", "))}</dd>`
   +`<dt>${L("Validità","Valid")}</dt><dd>${L(`dal ${wd(o.d)} ${fd(o.d)} al ${wd(o.a)} ${fd(o.a)}`,`${wd(o.d)} ${fd(o.d)} to ${wd(o.a)} ${fd(o.a)}`)}</dd>`
@@ -2392,8 +3089,103 @@ showTab(P.tab);update();refresh();
 
 // ---------- versione e aggiornamenti (v51) ----------
 // APP_V/APP_D li scrive strumenti/versione_app.py (anche dal workflow delle offerte): stessa versione di version.json, INFO.md e dell'etichetta vNN.
-const APP_V=55,APP_D="2026-11-24";
+const APP_V=56,APP_D="2026-11-24";
 const SITO="https://lucasalice1997-commits.github.io/spesasmart-wien/";
+// Il link porta alla ricetta base. Le impostazioni personali e il menu non entrano nell'URL.
+const recipeLink=r=>`${SITO}#${new URLSearchParams({ricetta:r.n})}`;
+const sharedRecipe=$("shared-recipe");
+function selectRecipeLink(){
+ const field=sharedRecipe.querySelector("input");
+ field.focus();
+ field.select();
+}
+function showSharedRecipe(r,selectLink=false){
+ const pantry=rd(r),url=recipeLink(r);
+ sharedRecipe.innerHTML=`<h2 id="shared-recipe-title">${esc(rn(r.n))}</h2>
+ <p class="muted">${L("Ricetta base · 1 porzione adulta","Base recipe · 1 adult portion")} · ${esc(r.t)}</p>
+ <ul>${Object.entries(r.g).map(([i,g])=>`<li>${esc(tx(I[i][0]))} · ${g} g</li>`).join("")}</ul>
+ ${pantry?`<p>${L("Dalla dispensa:","From the cupboard:")} ${esc(pantry)}</p>`:""}
+ <ol>${rp(r).map(step=>`<li>${esc(step)}</li>`).join("")}</ol>
+ <label>${L("Link della ricetta","Recipe link")}<input type="url" readonly value="${esc(url)}"></label>
+ <div class="bar"><button type="button" class="btn" data-share-link>${L("Condividi ricetta","Share recipe")}</button>
+ <form method="dialog"><button class="btn ghost" autofocus>${L("Chiudi","Close")}</button></form></div>
+ <p class="small muted" role="status"></p>`;
+ sharedRecipe.querySelector("[data-share-link]").onclick=()=>shareRecipe(r);
+ sharedRecipe.showModal();
+ if(selectLink)selectRecipeLink();
+}
+async function shareRecipe(r){
+ const url=recipeLink(r);
+ if(typeof navigator.share==="function"){
+  try{await navigator.share({title:rn(r.n),url});return}
+  catch(e){if(e.name==="AbortError")return}
+ }
+ try{
+  await navigator.clipboard.writeText(url);
+  const msg=L("Link copiato.","Link copied.");
+  if(sharedRecipe.open)sharedRecipe.querySelector("[role=status]").textContent=msg;
+  else snack(msg);
+ }
+ catch(e){if(sharedRecipe.open)selectRecipeLink();else showSharedRecipe(r,true)}
+}
+const recipeSearchText=text=>text.normalize("NFD").replace(/\p{M}/gu,"").toLowerCase();
+$("recipe-book-open").onclick=()=>{
+ const book=$("recipe-book");
+ book.innerHTML=`<h2 id="recipe-book-title">${L("Ricettario","Recipe book")}</h2>
+ <label>${L("Cerca per nome o ingrediente","Search by name or ingredient")}<input type="search" autofocus></label>
+ <label>${L("Pasto","Meal")} <select>
+ <option value="">${L("Tutti","All")}</option><option value="b">${L("Colazione","Breakfast")}</option>
+ <option value="main">${L("Pranzo e cena","Lunch and dinner")}</option><option value="s">${L("Spuntino","Snack")}</option>
+ </select></label>
+ <p class="small muted" role="status"></p>
+ <ul></ul>
+ <button type="button" class="btn ghost" data-more>${L("Mostra altre ricette","Show more recipes")}</button>
+ <form method="dialog"><button class="btn ghost">${L("Chiudi","Close")}</button></form>`;
+ const input=book.querySelector("input"), meal=book.querySelector("select");
+ const list=book.querySelector("ul"), more=book.querySelector("[data-more]");
+ const rows=RC.map((r,id)=>({id,title:rn(r.n),meal:MAIN(r.s)?"main":r.s,
+  terms:recipeSearchText([rn(r.n),...Object.keys(r.g).map(ingN)].join(" "))}))
+  .sort((a,b)=>a.title.localeCompare(b.title,LANG));
+ let filtered=[],shown=0;
+ const moreRows=(moveFocus=false)=>{
+  const first=shown;
+  const page=filtered.slice(first,first+20);
+  list.insertAdjacentHTML("beforeend",page.map(row=>
+   `<li><button type="button" class="linkbtn" data-recipe-id="${row.id}">${esc(row.title)}</button></li>`).join(""));
+  shown+=page.length;
+  if(moveFocus)list.children[first]?.querySelector("button").focus();
+  more.hidden=shown>=filtered.length;
+ };
+ const filter=()=>{
+  const words=recipeSearchText(input.value).trim().split(/\s+/);
+  filtered=rows.filter(row=>(!meal.value||meal.value===row.meal)&&words.every(word=>row.terms.includes(word)));
+  book.querySelector("[role=status]").textContent=filtered.length
+   ?L(`Ricette trovate: ${filtered.length}`,`Recipes found: ${filtered.length}`)
+   :L("Nessuna ricetta trovata.","No recipes found.");
+  shown=0;
+  list.replaceChildren();
+  moreRows();
+ };
+ input.oninput=meal.onchange=filter;
+ more.onclick=()=>moreRows(true);
+ list.onclick=e=>{
+  const choice=e.target.closest("button[data-recipe-id]");
+  if(choice)showSharedRecipe(RC[Number(choice.dataset.recipeId)]);
+ };
+ filter();
+ book.showModal();
+};
+function openSharedRecipe(onClose){
+ const name=new URLSearchParams(location.hash.slice(1)).get("ricetta");
+ const r=name&&RC.find(x=>x.n===name);
+ if(!r)return false;
+ sharedRecipe.addEventListener("close",()=>{
+  history.replaceState(history.state,"",location.pathname+location.search);
+  onClose?.();
+ },{once:true});
+ showSharedRecipe(r);
+ return true;
+}
 function showVersion(){$("app-ver").textContent=L(`Versione ${APP_V} · ${fd(APP_D)} · © Progetto Nocciola`,`Version ${APP_V} · ${fd(APP_D)} · © Progetto Nocciola`)} // v53: avviso di copyright (LICENSE nel repository pubblico)
 let UPD=null; // versione nuova trovata sul sito
 function drawUpdate(stato,msg){
@@ -2425,6 +3217,13 @@ showVersion();checkUpdate();
 // ---------- benvenuto (v49): paese → regione → catene e offerte della zona ----------
 // Il paese si suggerisce dal fuso orario e dalla lingua del telefono: nessun permesso di posizione, nessuna rete.
 let WL=null; // ridisegna il benvenuto se è aperto (cambio di lingua)
+// T15: Tab e Maiusc+Tab restano dentro un dialogo modale (benvenuto, guida): dall'ultimo controllo si torna al primo e viceversa,
+// anche partendo dal titolo (tabindex=-1, focus iniziale) o da un elemento fuori dal dialogo
+function trapTab(box,e){if(e.key!=="Tab"||e.altKey||e.ctrlKey||e.metaKey)return;
+ const f=[...box.querySelectorAll('button,input,select,textarea,a[href],[tabindex]:not([tabindex="-1"])')].filter(x=>!x.disabled&&x.getClientRects().length);if(!f.length)return;
+ const a=document.activeElement,inside=box.contains(a),pos=x=>a.compareDocumentPosition(x);
+ if(e.shiftKey){if(!inside||!f.some(x=>pos(x)&Node.DOCUMENT_POSITION_PRECEDING)){e.preventDefault();f[f.length-1].focus()}}
+ else if(!inside||!f.some(x=>pos(x)&Node.DOCUMENT_POSITION_FOLLOWING)){e.preventDefault();f[0].focus()}}
 function welcome(){
  const box=document.createElement("div");box.id="welcome";box.className="welcome";box.setAttribute("role","dialog");box.setAttribute("aria-modal","true");box.setAttribute("aria-labelledby","wl-h");
  document.body.appendChild(box);const prevOverflow=document.body.style.overflow;document.body.style.overflow="hidden";
@@ -2465,6 +3264,7 @@ function welcome(){
   if(b.dataset.r){P.region=b.dataset.r;q="";step="s";draw();return}
   if(b.dataset.back){step=b.dataset.back;q="";draw();return}
   if(b.id==="wl-go"){box.remove();WL=null;document.body.style.overflow=prevOverflow;fillRegions();fillChains();npUnit();clearPins();update();const t=$("t-"+P.tab);if(t)t.focus({preventScroll:true});tour()}};
+ box.addEventListener("keydown",e=>trapTab(box,e));
  WL=()=>draw(false);draw();
 }
 // ---------- guida (v55): 4 passi sulle schede vere, una riga ciascuno; al primo avvio dopo il benvenuto e da Impostazioni ----------
@@ -2488,11 +3288,11 @@ function tour(){
   if(focus!==false)$("tour-h").focus({preventScroll:true});
  }
  box.onclick=e=>{const b=e.target.closest("button[data-t]");if(!b)return;if(b.dataset.t==="skip"||i>=steps.length-1){close();return}i++;draw()};
- box.onkeydown=e=>{if(e.key==="Escape")close()};
+ box.onkeydown=e=>{if(e.key==="Escape")close();else trapTab(box,e)};
  TOUR=()=>draw(false);draw();
 }
 $("tour-open").onclick=()=>{$("app-settings").open=false;tour()};
-if(FIRST)welcome();
+if(!openSharedRecipe(FIRST?welcome:undefined)&&FIRST)welcome();
 // a mezzanotte (pagina aperta) le spunte del nuovo giorno si attivano da sole (v22, da ChatGPT)
 function refreshDay(){if(CONF&&renderedDay!==today())render()}
 setInterval(()=>{if(!document.hidden)refreshDay()},1000);

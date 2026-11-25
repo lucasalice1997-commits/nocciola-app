@@ -1,6 +1,6 @@
 const scope = self.registration.scope;
 const prefix = 'nocciola:' + scope + ':';
-const cacheName = prefix + 'nocciola-v57';
+const cacheName = prefix + 'nocciola-v58';
 const shell = new URL('index.html', scope).href;
 const offers = new URL('offers.json', scope).href;
 // v44: anche i caratteri (prima arrivavano da Google Fonts), così funzionano offline
