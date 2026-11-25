@@ -1647,7 +1647,8 @@ const fd=s=>s?s.slice(8)+"."+s.slice(5,7)+".":"?";
 const WD=["domenica","lunedì","martedì","mercoledì","giovedì","venerdì","sabato"],MO=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
 const WD_EN=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const wd=s=>(LANG==="en"?WD_EN:WD)[new Date(s+"T12:00:00").getDay()];
-const LS={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){LS.fail=true;return false}},fail:false};
+const MISURA_TANA=location.hash==="#misura";
+const LS={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set(k,v){if(MISURA_TANA)return true;try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){LS.fail=true;return false}},fail:false};
 
 // ---------- lingua: italiano / inglese ----------
 // I dati restano in italiano (nomi dei piatti e degli ingredienti fanno da chiave nei salvataggi): si traduce solo quello che si mostra.
@@ -3088,11 +3089,11 @@ applyStatic();fillProducts();fillRegions();setAppearance();
 {const inApp=!!window.NocciolaAndroid||matchMedia("(display-mode: standalone)").matches||navigator.standalone===true,android=/Android/i.test(navigator.userAgent);
  $("getapp").hidden=inApp||!android||LS.get("nc-app-nascosta",false)===true;
  $("getapp-close").onclick=()=>{LS.set("nc-app-nascosta",true);$("getapp").hidden=true}}
-showTab(P.tab);update();refresh();
+if(MISURA_TANA)render();else{showTab(P.tab);update();refresh()}
 
 // ---------- versione e aggiornamenti (v51) ----------
 // APP_V/APP_D li scrive strumenti/versione_app.py (anche dal workflow delle offerte): stessa versione di version.json, INFO.md e dell'etichetta vNN.
-const APP_V=58,APP_D="2026-11-25";
+const APP_V=59,APP_D="2026-11-25";
 const SITO="https://lucasalice1997-commits.github.io/spesasmart-wien/";
 // Il link porta alla ricetta base. Le impostazioni personali e il menu non entrano nell'URL.
 const recipeLink=r=>`${SITO}#${new URLSearchParams({ricetta:r.n})}`;
@@ -3215,7 +3216,7 @@ function checkUpdate(){
  if(!url)return;
  fetch(url+"?t="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(j&&Number.isInteger(j.v)&&j.v>APP_V){UPD={v:j.v,d:j.data};drawUpdate()}}).catch(()=>{});
 }
-showVersion();checkUpdate();
+showVersion();if(!MISURA_TANA)checkUpdate();
 
 const dietTitle=()=>L("Esigenze alimentari","Dietary needs");
 function dietFields(choice,disabled=false){
@@ -3339,6 +3340,69 @@ function tour(first=false){
  TOUR=()=>draw(false);draw();
 }
 $("tour-open").onclick=()=>{$("app-settings").open=false;tour()};
+function misuraTana(){
+ const durata=30000, pannello=document.createElement("section"), stato=document.createElement("p");
+ pannello.id="misura-tana";pannello.className="card";
+ pannello.style.cssText="position:fixed;inset:auto 8px 8px;z-index:9999;max-height:50vh;overflow:auto;padding:12px";
+ stato.setAttribute("role","status");
+ stato.textContent=L("Misura in corso. Tieni la Tana aperta per 30 secondi.", "Measuring. Keep the Den open for 30 seconds.");
+ pannello.append(stato);
+ for(const elemento of document.body.children)elemento.inert=true;
+ document.body.append(pannello);
+ const inizio=performance.now();
+ showTab("tana");
+ $("v-tana").scrollIntoView({block:"start",behavior:"instant"});
+ let interrotta=document.hidden;
+ function interrompi(){if(document.hidden)interrotta=true}
+ document.addEventListener("visibilitychange",interrompi);
+ requestAnimationFrame(()=>requestAnimationFrame(primo=>{
+  const apertura=performance.now()-inizio;
+  const intervalli=[];
+  let ultimo=primo;
+  function campiona(ora){
+   if(interrotta){
+    document.removeEventListener("visibilitychange",interrompi);
+    stato.textContent=L("Misura interrotta. Ricarica la pagina e tienila aperta.", "Measurement interrupted. Reload and keep this page open.");
+    return;
+   }
+   intervalli.push(ora-ultimo);ultimo=ora;
+   if(ora-primo<durata){requestAnimationFrame(campiona);return}
+   document.removeEventListener("visibilitychange",interrompi);
+   const ordinati=intervalli.sort((a,b)=>a-b);
+   const percentile=p=>ordinati[Math.ceil(ordinati.length*p)-1].toFixed(1);
+   const ms=n=>n>0?Math.round(n)+" ms":L("n/d","n/a");
+   const fcp=performance.getEntriesByName("first-contentful-paint")[0]?.startTime;
+   const fine=performance.getEntriesByType("navigation")[0]?.loadEventEnd;
+   const fps=Math.round(1000*ordinati.length/(ora-primo));
+   const scatti=soglia=>ordinati.filter(valore=>valore>soglia).length;
+   const topino=!!$("tana").querySelector(".den .tm-spr");
+   const esito=[
+    `v${APP_V} · ${L("Tana ordinaria (Pianeta spento)", "Ordinary Den (Planet off)")}`,
+    `${L("Apertura app", "App start")}: FCP ${ms(fcp)}, ${L("caricamento completo","full load")} ${ms(fine)}`,
+    `${L("Apertura Tana, due fotogrammi","Den opening, two animation frames")}: ${ms(apertura)}`,
+    `${L("Fluidità su 30 s","30 s frame pacing")}: ${fps} FPS · ${L("mediana","median")} ${percentile(.5)} ms, P95 ${percentile(.95)} ms, max ${percentile(1)} ms · >33 ms: ${scatti(33)}, >50 ms: ${scatti(50)} / ${ordinati.length}`,
+    topino?L("Topino presente","Mouse present"):L("Topino assente","Mouse missing"),
+    RMQ.matches?L("Movimento ridotto attivo","Reduced motion on"):L("Movimento ridotto disattivo","Reduced motion off"),
+    `${innerWidth}×${innerHeight} CSS px · DPR ${devicePixelRatio} · ${navigator.userAgent}`
+   ].join("\n");
+   stato.textContent=L("Misura completata.", "Measurement complete.");
+   const testo=document.createElement("textarea"), copia=document.createElement("button");
+   testo.readOnly=true;testo.value=esito;testo.rows=5;testo.style.width="100%";
+   testo.setAttribute("aria-label",L("Risultato della misura","Measurement result"));
+   copia.type="button";copia.className="btn";
+   copia.textContent=L("Copia il risultato","Copy result");
+   copia.onclick=async()=>{
+    try{await navigator.clipboard.writeText(esito);stato.textContent=L("Risultato copiato.","Result copied.")}
+    catch{testo.focus();testo.select();stato.textContent=L("Copia il testo selezionato.","Copy the selected text.")}
+   };
+   pannello.append(testo,copia);
+  }
+  requestAnimationFrame(campiona);
+ }));
+}
+if(MISURA_TANA){
+ addEventListener("load",misuraTana,{once:true});
+}else{
 const resumeOnboarding=P.onboarding==="setup"?welcome:P.onboarding==="guide"?()=>tour(true):undefined;
 if(!openSharedRecipe(resumeOnboarding))resumeOnboarding?.();
 // a mezzanotte (pagina aperta) le spunte del nuovo giorno si attivano da sole (v22, da ChatGPT)
@@ -3346,6 +3410,8 @@ function refreshDay(){if(CONF&&renderedDay!==today())render()}
 setInterval(()=>{if(!document.hidden)refreshDay()},1000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden){refreshDay();refresh();if(typeof checkUpdate==="function")checkUpdate()}});
 if("serviceWorker" in navigator&&isSecureContext&&/^https?:$/.test(location.protocol)&&window.top===window)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+}
+addEventListener("hashchange",()=>{if((location.hash==="#misura")!==MISURA_TANA)location.reload()});
 </script>
 </body>
 </html>
