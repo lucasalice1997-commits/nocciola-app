@@ -1,10 +1,10 @@
 const scope = self.registration.scope;
 const prefix = 'nocciola:' + scope + ':';
-const cacheName = prefix + 'nocciola-v62';
+const cacheName = prefix + 'nocciola-v63';
 const shell = new URL('index.html', scope).href;
 const offers = new URL('offers.json', scope).href;
 // v44: anche i caratteri (prima arrivavano da Google Fonts), così funzionano offline
-const assets = ['manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-192.png', 'icon-maskable-512.png', 'favicon-48.png', 'apple-touch-icon.png',
+const assets = ['manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-192.png', 'icon-maskable-512.png', 'favicon-48.png', 'apple-touch-icon.png', 'topino.webp',
   'fonts/dm-sans-latin.woff2', 'fonts/dm-sans-latin-ext.woff2', 'fonts/fraunces-latin.woff2', 'fonts/fraunces-latin-ext.woff2']
   .map(path => new URL(path, scope).href);
 
