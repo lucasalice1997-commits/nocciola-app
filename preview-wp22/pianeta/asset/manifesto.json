@@ -1,0 +1,955 @@
+{
+  "schemaVersion": 1,
+  "assets": [
+    {
+      "id": "terrain.stone",
+      "etichetta": "Pietra",
+      "categoria": "terrain",
+      "versione": 1,
+      "modello": "stone.glb",
+      "materiali": [
+        "Pietra"
+      ],
+      "texture": [],
+      "scala": 0.1,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -0.9840293526649475,
+          0.0,
+          -0.8589780330657959
+        ],
+        "max": [
+          0.9928086400032043,
+          0.6700000166893005,
+          0.8111344575881958
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "bozza"
+    },
+    {
+      "id": "terrain.moss",
+      "etichetta": "Muschio",
+      "categoria": "terrain",
+      "versione": 1,
+      "modello": "moss.glb",
+      "materiali": [
+        "Muschio"
+      ],
+      "texture": [],
+      "scala": 0.13,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -0.9800000190734863,
+          0.0,
+          -0.7120000123977661
+        ],
+        "max": [
+          1.0,
+          0.44999998807907104,
+          0.8399999737739563
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "bozza"
+    },
+    {
+      "id": "terrain.path",
+      "etichetta": "Sentiero",
+      "categoria": "terrain",
+      "versione": 1,
+      "modello": "path.glb",
+      "materiali": [
+        "Sentiero"
+      ],
+      "texture": [],
+      "scala": 0.16,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -0.6299999952316284,
+          0.0,
+          -1.2799999713897705
+        ],
+        "max": [
+          0.7900000214576721,
+          0.02800000086426735,
+          1.2899999618530273
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "bozza"
+    },
+    {
+      "id": "terrain.earth",
+      "etichetta": "Terra",
+      "categoria": "terrain",
+      "versione": 1,
+      "modello": "earth.glb",
+      "materiali": [
+        "Terra"
+      ],
+      "texture": [],
+      "scala": 0.16,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -1.014464020729065,
+          0.0,
+          -0.8883323669433594
+        ],
+        "max": [
+          0.9800665974617004,
+          0.15000000596046448,
+          0.876041829586029
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "bozza"
+    },
+    {
+      "id": "terrain.water",
+      "etichetta": "Laghetto",
+      "categoria": "terrain",
+      "versione": 1,
+      "modello": "water.glb",
+      "materiali": [
+        "Laghetto"
+      ],
+      "texture": [],
+      "scala": 0.16,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -0.9266471862792969,
+          0.0,
+          -1.256600022315979
+        ],
+        "max": [
+          1.0,
+          0.125,
+          1.1224000453948975
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "bozza"
+    },
+    {
+      "id": "terrain.root",
+      "etichetta": "Radice",
+      "categoria": "terrain",
+      "versione": 1,
+      "modello": "root.glb",
+      "materiali": [
+        "Radice"
+      ],
+      "texture": [],
+      "scala": 0.18,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -0.9287443161010742,
+          -0.2505255937576294,
+          -0.029634714126586914
+        ],
+        "max": [
+          0.9062631726264954,
+          0.24882686138153076,
+          0.7087053656578064
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "segnaposto"
+    },
+    {
+      "id": "terrain.wood",
+      "etichetta": "Legno",
+      "categoria": "terrain",
+      "versione": 1,
+      "modello": "wood.glb",
+      "materiali": [
+        "Legno"
+      ],
+      "texture": [],
+      "scala": 0.15,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -0.878544270992279,
+          -0.05000000074505806,
+          -0.3592773377895355
+        ],
+        "max": [
+          0.9148841500282288,
+          0.5199999809265137,
+          0.3499999940395355
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "segnaposto"
+    },
+    {
+      "id": "building.tana",
+      "etichetta": "Tana",
+      "categoria": "building",
+      "versione": 1,
+      "modello": "tana.glb",
+      "materiali": [
+        "Tana"
+      ],
+      "texture": [],
+      "scala": 0.2,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -0.975456178188324,
+          -0.020033320412039757,
+          -0.7055559754371643
+        ],
+        "max": [
+          0.975456178188324,
+          0.8182809352874756,
+          0.9200000166893005
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "bozza"
+    },
+    {
+      "id": "fence.recinzione",
+      "etichetta": "Recinzione",
+      "categoria": "fence",
+      "versione": 1,
+      "modello": "recinzione.glb",
+      "materiali": [
+        "Recinzione"
+      ],
+      "texture": [],
+      "scala": 0.13,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -0.8100000023841858,
+          0.0,
+          -0.08500000089406967
+        ],
+        "max": [
+          0.8100000023841858,
+          0.5799999833106995,
+          0.08500000089406967
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "bozza"
+    },
+    {
+      "id": "plant.carota",
+      "etichetta": "Carota",
+      "categoria": "plant",
+      "versione": 1,
+      "modello": "carota.glb",
+      "materiali": [
+        "Carota"
+      ],
+      "texture": [],
+      "scala": 0.15,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -0.2199999988079071,
+          0.0,
+          -0.1899999976158142
+        ],
+        "max": [
+          0.2199999988079071,
+          0.7900000214576721,
+          0.1899999976158142
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "bozza"
+    },
+    {
+      "id": "plant.tife",
+      "etichetta": "Tife",
+      "categoria": "plant",
+      "versione": 1,
+      "modello": "tife.glb",
+      "materiali": [
+        "Tife"
+      ],
+      "texture": [],
+      "scala": 0.115,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -0.41999998688697815,
+          0.0,
+          -0.36258330941200256
+        ],
+        "max": [
+          0.4000000059604645,
+          3.140000104904175,
+          0.2825832962989807
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "bozza"
+    },
+    {
+      "id": "building.pollaio",
+      "etichetta": "Pollaio",
+      "categoria": "building",
+      "versione": 1,
+      "modello": "pollaio.glb",
+      "materiali": [
+        "Pollaio"
+      ],
+      "texture": [],
+      "scala": 0.17,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -0.6600000262260437,
+          0.0,
+          -0.46000000834465027
+        ],
+        "max": [
+          0.6600000262260437,
+          0.8199999928474426,
+          0.46000000834465027
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "bozza"
+    },
+    {
+      "id": "tree.melo",
+      "etichetta": "Melo",
+      "categoria": "tree",
+      "versione": 1,
+      "modello": "melo.glb",
+      "materiali": [
+        "Melo"
+      ],
+      "texture": [],
+      "scala": 0.18,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -0.4399999976158142,
+          0.0,
+          -0.4065999984741211
+        ],
+        "max": [
+          0.4399999976158142,
+          1.0700000524520874,
+          0.41040000319480896
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "bozza"
+    },
+    {
+      "id": "prop.cesto",
+      "etichetta": "Cesto di mele",
+      "categoria": "prop",
+      "versione": 1,
+      "modello": "cesto.glb",
+      "materiali": [
+        "Cesto di mele"
+      ],
+      "texture": [],
+      "scala": 0.16,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -0.38999998569488525,
+          0.0,
+          -0.33000001311302185
+        ],
+        "max": [
+          0.38999998569488525,
+          0.6261401772499084,
+          0.33000001311302185
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "bozza"
+    },
+    {
+      "id": "plant.cavolo",
+      "etichetta": "Cavolo",
+      "categoria": "plant",
+      "versione": 1,
+      "modello": "cavolo.glb",
+      "materiali": [
+        "Cavolo"
+      ],
+      "texture": [],
+      "scala": 0.096,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -0.3912999927997589,
+          0.0,
+          -0.3445048928260803
+        ],
+        "max": [
+          0.4300000071525574,
+          0.5199999809265137,
+          0.35801491141319275
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "bozza"
+    },
+    {
+      "id": "plant.lattuga",
+      "etichetta": "Lattuga",
+      "categoria": "plant",
+      "versione": 1,
+      "modello": "lattuga.glb",
+      "materiali": [
+        "Lattuga"
+      ],
+      "texture": [],
+      "scala": 0.095,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -0.4234553575515747,
+          0.0,
+          -0.45821613073349
+        ],
+        "max": [
+          0.4699999988079071,
+          0.4399999976158142,
+          0.45821613073349
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "bozza"
+    },
+    {
+      "id": "plant.pomodoro",
+      "etichetta": "Pomodoro",
+      "categoria": "plant",
+      "versione": 1,
+      "modello": "pomodoro.glb",
+      "materiali": [
+        "Pomodoro"
+      ],
+      "texture": [],
+      "scala": 0.1,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -0.33000001311302185,
+          -0.08900000154972076,
+          -0.2921690344810486
+        ],
+        "max": [
+          0.7330913543701172,
+          1.4919999837875366,
+          0.5645772814750671
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "segnaposto"
+    },
+    {
+      "id": "plant.fagiolo",
+      "etichetta": "Fagiolo",
+      "categoria": "plant",
+      "versione": 1,
+      "modello": "fagiolo.glb",
+      "materiali": [
+        "Fagiolo"
+      ],
+      "texture": [],
+      "scala": 0.13,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -0.6100000143051147,
+          -0.07000000029802322,
+          -0.47563374042510986
+        ],
+        "max": [
+          0.5860146880149841,
+          1.996999979019165,
+          0.5883874297142029
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "segnaposto"
+    },
+    {
+      "id": "plant.pisello",
+      "etichetta": "Pisello",
+      "categoria": "plant",
+      "versione": 1,
+      "modello": "pisello.glb",
+      "materiali": [
+        "Pisello"
+      ],
+      "texture": [],
+      "scala": 0.13,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -0.6100000143051147,
+          -0.07000000029802322,
+          -0.47563374042510986
+        ],
+        "max": [
+          0.5860146880149841,
+          1.996999979019165,
+          0.5883874297142029
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "segnaposto"
+    },
+    {
+      "id": "plant.grano",
+      "etichetta": "Grano",
+      "categoria": "plant",
+      "versione": 1,
+      "modello": "grano.glb",
+      "materiali": [
+        "Grano"
+      ],
+      "texture": [],
+      "scala": 0.125,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -0.6903207302093506,
+          0.0,
+          -0.7177852392196655
+        ],
+        "max": [
+          0.6591708064079285,
+          2.490000009536743,
+          0.7907768487930298
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "bozza"
+    },
+    {
+      "id": "animal.gallina",
+      "etichetta": "Gallina",
+      "categoria": "animal",
+      "versione": 1,
+      "modello": "gallina.glb",
+      "materiali": [
+        "Gallina"
+      ],
+      "texture": [],
+      "scala": 0.073,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -0.5088273882865906,
+          0.0,
+          -0.7409999966621399
+        ],
+        "max": [
+          0.5303999781608582,
+          0.9900000095367432,
+          0.8579999804496765
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "bozza"
+    },
+    {
+      "id": "animal.mucca",
+      "etichetta": "Mucca",
+      "categoria": "animal",
+      "versione": 1,
+      "modello": "mucca.glb",
+      "materiali": [
+        "Mucca"
+      ],
+      "texture": [],
+      "scala": 0.24,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -0.4508165121078491,
+          0.0,
+          -0.7618706226348877
+        ],
+        "max": [
+          0.4508165121078491,
+          1.043314814567566,
+          0.9049999713897705
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "bozza"
+    },
+    {
+      "id": "animal.maiale",
+      "etichetta": "Maiale",
+      "categoria": "animal",
+      "versione": 1,
+      "modello": "maiale.glb",
+      "materiali": [
+        "Maiale"
+      ],
+      "texture": [],
+      "scala": 0.19,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -0.3400000035762787,
+          0.0,
+          -0.6202254295349121
+        ],
+        "max": [
+          0.3400000035762787,
+          0.9103503823280334,
+          0.8190000057220459
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "segnaposto"
+    },
+    {
+      "id": "animal.pecora",
+      "etichetta": "Pecora",
+      "categoria": "animal",
+      "versione": 1,
+      "modello": "pecora.glb",
+      "materiali": [
+        "Pecora"
+      ],
+      "texture": [],
+      "scala": 0.19,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -0.43149998784065247,
+          0.0,
+          -0.5767999887466431
+        ],
+        "max": [
+          0.4399999976158142,
+          0.8999999761581421,
+          0.7852628231048584
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "segnaposto"
+    },
+    {
+      "id": "prop.nido",
+      "etichetta": "Nido con uova",
+      "categoria": "prop",
+      "versione": 1,
+      "modello": "nido.glb",
+      "materiali": [
+        "Nido con uova"
+      ],
+      "texture": [],
+      "scala": 0.1,
+      "ancoraggio": [
+        0,
+        0,
+        0
+      ],
+      "orientamento": {
+        "alto": "+Y",
+        "fronte": "+Z"
+      },
+      "boundingBox": {
+        "min": [
+          -0.4910280406475067,
+          0.0,
+          -0.39465081691741943
+        ],
+        "max": [
+          0.5,
+          0.47999998927116394,
+          0.458996057510376
+        ]
+      },
+      "animazioni": [],
+      "lod": [],
+      "provenienza": "Geometria procedurale originale, prova Nocciola",
+      "licenza": "Uso interno Nocciola, tutti i diritti riservati",
+      "approvazione": "bozza"
+    }
+  ]
+}
